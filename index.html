@@ -123,6 +123,7 @@
             padding: 10px;
             border: 1px dashed transparent;
             transition: all 0.3s;
+            cursor: text; /* Indicate text input on hover */
         }
         
         .content-editable:hover:not([contenteditable="true"]) {
@@ -356,29 +357,6 @@
             margin-top: 10px;
         }
         
-        .page-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding: 20px 0;
-            border-top: 1px solid #ddd;
-        }
-        
-        .page-indicator {
-            text-align: center;
-            margin: 10px 0;
-            font-weight: 500;
-            color: var(--secondary);
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px 0;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
         .page { display: none; }
         .page.active { display: block; }
         
@@ -528,10 +506,6 @@
                     <button class="upload-btn" onclick="document.getElementById('audio-upload-page3').click()"><i class="fas fa-upload"></i> Change Audio</button>
                     <input type="file" id="audio-upload-page3" accept="audio/*" style="display: none;" onchange="previewAudio(event, 'pronunciation-audio')">
                     
-                    <!-- This content-editable is part of an activity. If it needs its own edit controls, they'd be placed here.
-                         Otherwise, the section's edit controls target "p3-pronunciation-practice".
-                         For simplicity, we'll assume the section's controls are for the main text above.
-                         If you want to edit this specific part, you'd add another <div class="edit-controls"> here. -->
                     <div class="content-editable" id="p3-listen-repeat-instructions" contenteditable="false"> 
                         <p>Repeat after the audio:</p>
                         <ol>
@@ -577,7 +551,6 @@
                     <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
                 </div>
                 <h2>Interactive Practice: Where Is It?</h2>
-                <!-- The section's edit button will target p4-quiz-instructions as it's the first .content-editable for the instructions -->
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-eye"></i> What Do You See?</div>
                     <div class="image-container">
@@ -703,8 +676,6 @@
                     
                     <div class="quiz-container">
                         <div class="quiz-question">
-                             <!-- This content-editable is part of an activity. If it needs its own edit controls, they'd be placed here.
-                                  Otherwise, the section's edit controls target "p6-vocab-review-instructions". -->
                             <div class="content-editable" id="p6-listen-write-instructions" contenteditable="false">
                                 <p>Write one word per line as you hear them:</p>
                             </div>
@@ -801,64 +772,142 @@
             window.scrollTo(0, 0);
         }
 
-        // --- NEW EDITING FUNCTIONS ---
-        function enableEdit(editBtn) {
-            const controlsContainer = editBtn.parentElement;
-            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
-            
-            if (!section) {
-                console.error("Edit button's control container is not within a .lesson-section or .verse-box.", controlsContainer);
+        // --- EDITING FUNCTIONS ---
+        function enableEdit(triggerElement) {
+            let controlsContainer, section, editableToActivate, editBtnAssociated;
+
+            // Determine the context based on what was clicked/triggered
+            if (triggerElement.classList.contains('edit-btn-section')) { // Triggered by an Edit button
+                editBtnAssociated = triggerElement;
+                controlsContainer = editBtnAssociated.parentElement;
+                section = controlsContainer.closest('.lesson-section, .verse-box');
+                if (!section) { 
+                    console.error("Edit button's control container is not within a .lesson-section or .verse-box.", controlsContainer); 
+                    return; 
+                }
+                // Default: first content-editable in the section for this button
+                editableToActivate = section.querySelector('.content-editable'); 
+            } else if (triggerElement.classList.contains('content-editable')) { // Triggered by clicking a content-editable div
+                editableToActivate = triggerElement;
+                section = editableToActivate.closest('.lesson-section, .verse-box');
+                if (!section) { 
+                    console.warn("Content-editable element clicked is not within a .lesson-section or .verse-box.", editableToActivate); 
+                    // If it's not in a section, it can't use shared controls.
+                    // You might want to allow editing without controls, or disallow. For now, let's assume controls are needed.
+                    return; 
+                }
+                controlsContainer = section.querySelector('.edit-controls');
+                if (controlsContainer) {
+                    editBtnAssociated = controlsContainer.querySelector('.edit-btn-section');
+                } else {
+                    // This content-editable is in a section but the section has no .edit-controls
+                    // console.warn("No edit controls found in the section for the clicked content-editable.", section);
+                    // Decide if editing should be allowed. For now, let's assume if no controls, no managed edit.
+                    return;
+                }
+            } else {
+                console.error("enableEdit called with an unknown element type:", triggerElement);
+                return;
+            }
+
+            // If, after determining context, we still don't have a target editable area for the controls
+            if (!editableToActivate) {
+                if (editBtnAssociated && controlsContainer) { 
+                    editBtnAssociated.innerHTML = '<i class="fas fa-eye-slash"></i> No Edit Area';
+                    editBtnAssociated.disabled = true;
+                    const saveBtn = controlsContainer.querySelector('.save-btn-section');
+                    const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
+                    if(saveBtn) { saveBtn.classList.add('hidden'); saveBtn.disabled = true; }
+                    if(cancelBtn) { cancelBtn.classList.add('hidden'); cancelBtn.disabled = true; }
+                }
+                console.warn("No .content-editable element could be targeted for editing in section:", section ? section.id : "Unknown section", "Trigger:", triggerElement);
                 return;
             }
             
-            const editable = section.querySelector('.content-editable'); 
-            if (!editable) {
-                console.warn("No .content-editable element found in this section.", section);
-                controlsContainer.querySelectorAll('button').forEach(b => b.disabled = true);
-                if(editBtn) editBtn.innerHTML = '<i class="fas fa-eye-slash"></i> No Edit Area';
-                return;
+            // Auto-cancel any other active edit in the same section
+            if (section) {
+                const previouslyEditing = section.querySelector('.content-editable[data-currently-editing="true"]');
+                if (previouslyEditing && previouslyEditing !== editableToActivate) {
+                    console.log("Switching edit target. Auto-canceling previous edit for:", previouslyEditing.id || "anonymous editable");
+                    const prevOriginalContent = previouslyEditing.getAttribute('data-original-content');
+                    if (prevOriginalContent !== null) {
+                        previouslyEditing.innerHTML = prevOriginalContent;
+                    }
+                    previouslyEditing.setAttribute('contenteditable', 'false');
+                    previouslyEditing.removeAttribute('data-original-content');
+                    previouslyEditing.removeAttribute('data-currently-editing');
+                }
             }
 
-            editable.setAttribute('data-original-content', editable.innerHTML);
-            editable.setAttribute('contenteditable', 'true');
-            editable.focus();
+            editableToActivate.setAttribute('data-original-content', editableToActivate.innerHTML);
+            editableToActivate.setAttribute('contenteditable', 'true');
+            editableToActivate.setAttribute('data-currently-editing', 'true'); // Mark this one as being edited
+            editableToActivate.focus();
 
-            const saveBtn = controlsContainer.querySelector('.save-btn-section');
-            const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
+            // Manage button visibility in the relevant controls container
+            if (controlsContainer) {
+                const saveBtn = controlsContainer.querySelector('.save-btn-section');
+                const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
 
-            if(editBtn) editBtn.classList.add('hidden');
-            if (saveBtn) saveBtn.classList.remove('hidden');
-            if (cancelBtn) cancelBtn.classList.remove('hidden');
+                if (editBtnAssociated) editBtnAssociated.classList.add('hidden'); // Hide the specific edit button
+                if (saveBtn) saveBtn.classList.remove('hidden');
+                if (cancelBtn) cancelBtn.classList.remove('hidden');
+            } else {
+                 console.warn("Editable area activated, but no controls container found to update buttons for section:", section ? section.id : "Unknown section");
+            }
         }
 
         function saveSectionChanges(saveBtn) {
             const controlsContainer = saveBtn.parentElement;
-            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
+            const section = controlsContainer.closest('.lesson-section, .verse-box');
+            if (!section) { console.error("Save button not in a valid section's controls.", saveBtn); return; }
+
+            // Find the element marked as currently editing within this section
+            const editable = section.querySelector('.content-editable[data-currently-editing="true"]');
             
-            if (!section) return;
-            const editable = section.querySelector('.content-editable');
-            if (!editable) return;
+            if (!editable) {
+                console.warn("Save clicked, but no 'data-currently-editing' element found in section:", section.id);
+                // Attempt to restore button states if something is wrong
+                const editBtn = controlsContainer.querySelector('.edit-btn-section');
+                const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
+                saveBtn.classList.add('hidden');
+                if (cancelBtn) cancelBtn.classList.add('hidden');
+                if (editBtn) editBtn.classList.remove('hidden');
+                return;
+            }
 
             editable.setAttribute('contenteditable', 'false');
             editable.removeAttribute('data-original-content'); 
+            editable.removeAttribute('data-currently-editing'); // Clean up marker
 
-            console.log(`Section content for '${editable.id || 'unknown_section'}' saved:`, editable.innerHTML);
+            console.log(`Section content for '${editable.id || 'unknown_editable_id'}' saved.`);
 
             const editBtn = controlsContainer.querySelector('.edit-btn-section');
             const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
 
-            if(saveBtn) saveBtn.classList.add('hidden');
+            saveBtn.classList.add('hidden');
             if (cancelBtn) cancelBtn.classList.add('hidden');
             if (editBtn) editBtn.classList.remove('hidden');
         }
 
         function cancelSectionChanges(cancelBtn) {
             const controlsContainer = cancelBtn.parentElement;
-            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
+            const section = controlsContainer.closest('.lesson-section, .verse-box');
+            if (!section) { console.error("Cancel button not in a valid section's controls.", cancelBtn); return; }
 
-            if (!section) return;
-            const editable = section.querySelector('.content-editable');
-            if (!editable) return;
+            // Find the element marked as currently editing within this section
+            const editable = section.querySelector('.content-editable[data-currently-editing="true"]');
+
+            if (!editable) {
+                console.warn("Cancel clicked, but no 'data-currently-editing' element found in section:", section.id);
+                // Attempt to restore button states
+                const editBtn = controlsContainer.querySelector('.edit-btn-section');
+                const saveBtn = controlsContainer.querySelector('.save-btn-section');
+                cancelBtn.classList.add('hidden');
+                if (saveBtn) saveBtn.classList.add('hidden');
+                if (editBtn) editBtn.classList.remove('hidden');
+                return;
+            }
 
             const originalContent = editable.getAttribute('data-original-content');
             if (originalContent !== null) {
@@ -866,11 +915,12 @@
             }
             editable.setAttribute('contenteditable', 'false');
             editable.removeAttribute('data-original-content');
+            editable.removeAttribute('data-currently-editing'); // Clean up marker
 
             const editBtn = controlsContainer.querySelector('.edit-btn-section');
             const saveBtn = controlsContainer.querySelector('.save-btn-section');
 
-            if(cancelBtn) cancelBtn.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
             if (saveBtn) saveBtn.classList.add('hidden');
             if (editBtn) editBtn.classList.remove('hidden');
         }
@@ -912,6 +962,21 @@
         let draggedItem = null;
         
         document.addEventListener('DOMContentLoaded', function() {
+            // Click-to-edit for content-editable divs
+            document.querySelectorAll('.content-editable').forEach(editableDiv => {
+                editableDiv.addEventListener('click', function(event) {
+                    // Only trigger if not already editing and if the click is directly on the div, not an inner interactive element
+                    if (this.getAttribute('contenteditable') === 'true' || event.target !== this) {
+                        // If already editing, the click is likely for cursor placement.
+                        // If target is not 'this', it might be a link or button inside later.
+                        // For now, `event.target !== this` might be too restrictive if content has simple tags like <p>, <b>
+                        // Let's simplify: only check if already editing.
+                        if (this.getAttribute('contenteditable') === 'true') return;
+                    }
+                    enableEdit(this); // 'this' is the clicked content-editable div
+                });
+            });
+
             const draggables = document.querySelectorAll('.draggable');
             const dropTargets = document.querySelectorAll('.drop-target');
             
@@ -945,13 +1010,36 @@
                     if(dropzone) dropzone.classList.remove('highlight');
                     
                     if (draggedItem) {
-                        this.innerHTML = '';
+                        this.innerHTML = ''; // Clear previous content/styles
                         this.style.color = '';
                         this.style.fontWeight = '';
-                        this.textContent = draggedItem.textContent;
-                        this.setAttribute('data-answer', draggedItem.getAttribute('data-word'));
+                        this.textContent = draggedItem.textContent; // Set new text
+                        this.setAttribute('data-answer', draggedItem.getAttribute('data-word')); // Store the dropped word's data
                     }
                 });
+            });
+
+            // Image and Audio upload initializers
+            const imageUploads = [
+                { inputId: 'image-upload-page2', imgId: 'bible-story-img' },
+                { inputId: 'image-upload-page4', imgId: 'preposition-practice-img' }
+            ];
+            imageUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                }
+            });
+
+            const audioUploads = [
+                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
+                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
+            ];
+            audioUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                    inputElement.onchange = (event) => previewAudio(event, upload.audioId);
+                }
             });
         });
         
@@ -967,7 +1055,7 @@
                 const correctAnswer = zone.getAttribute('data-correct');
                 
                 const feedbackSpanOld = zone.querySelector('.feedback-text-dd');
-                if (feedbackSpanOld) feedbackSpanOld.remove();
+                if (feedbackSpanOld) feedbackSpanOld.remove(); // Clear old feedback
 
                 if (userAnswer === correctAnswer) {
                     target.style.color = 'var(--success)';
@@ -977,16 +1065,22 @@
                     target.style.fontWeight = 'normal';
                     allCorrect = false;
                     
-                    const feedback = document.createElement('span');
-                    feedback.classList.add('feedback-text-dd'); 
-                    feedback.style.color = 'var(--danger)';
-                    feedback.style.marginLeft = '10px';
+                    // Provide specific feedback if an answer was dropped
                     if (userAnswer) {
+                        const feedback = document.createElement('span');
+                        feedback.classList.add('feedback-text-dd'); 
+                        feedback.style.color = 'var(--danger)';
+                        feedback.style.marginLeft = '10px';
                         feedback.textContent = `(Incorrect. Correct: ${correctAnswer})`;
-                    } else {
+                        target.parentNode.appendChild(feedback);
+                    } else { // Feedback if no answer was dropped
+                         const feedback = document.createElement('span');
+                        feedback.classList.add('feedback-text-dd'); 
+                        feedback.style.color = 'var(--danger)';
+                        feedback.style.marginLeft = '10px';
                         feedback.textContent = `(Missing. Correct: ${correctAnswer})`;
+                        target.parentNode.appendChild(feedback);
                     }
-                    target.parentNode.appendChild(feedback);
                 }
             });
             
@@ -1000,12 +1094,12 @@
         function resetDragDrop() {
             const dropTargets = document.querySelectorAll('.drop-target');
             dropTargets.forEach(target => {
-                target.innerHTML = '';
-                target.style.color = '';
-                target.style.fontWeight = '';
-                target.removeAttribute('data-answer');
+                target.innerHTML = ''; // Clear the text
+                target.style.color = ''; // Reset color
+                target.style.fontWeight = ''; // Reset font weight
+                target.removeAttribute('data-answer'); // Remove stored answer
                 const feedbackSpan = target.parentNode.querySelector('.feedback-text-dd');
-                if (feedbackSpan) feedbackSpan.remove();
+                if (feedbackSpan) feedbackSpan.remove(); // Remove feedback span
             });
         }
         
@@ -1017,7 +1111,7 @@
             selects.forEach((select, index) => {
                 const feedbackSpan = select.parentElement.querySelector('.feedback-text');
                 if (!feedbackSpan) return;
-                feedbackSpan.textContent = '';
+                feedbackSpan.textContent = ''; // Clear previous feedback
 
                 if (select.value === correctAnswers[index]) {
                     select.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
@@ -1028,7 +1122,11 @@
                     select.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
                     select.style.borderColor = 'var(--danger)';
                     allCorrect = false;
-                    feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswers[index]})`;
+                    if (select.value) { // If user made a selection
+                        feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswers[index]})`;
+                    } else { // If user didn't choose anything
+                         feedbackSpan.textContent = ` Please choose. (Correct: ${correctAnswers[index]})`;
+                    }
                     feedbackSpan.style.color = 'var(--danger)';
                 }
             });
@@ -1036,7 +1134,7 @@
             if (allCorrect) {
                 alert('Excellent! All your preposition answers are correct!');
             } else {
-                 alert('Some preposition answers are incorrect. Please review.');
+                 alert('Some preposition answers are incorrect or missing. Please review.');
             }
         }
         
@@ -1049,11 +1147,15 @@
             ]; 
             
             const inputs = document.querySelectorAll('.vocab-input');
-            let allCorrect = true;
+            let allCorrectUserAnswers = true; // Tracks if all user-provided answers are correct
+            let allWordsAttempted = true; // Tracks if all required words were attempted
 
             inputs.forEach((input, index) => {
                 const feedbackSpan = input.nextElementSibling; 
-                if (!feedbackSpan) return;
+                if (!feedbackSpan || !feedbackSpan.classList.contains('feedback-text')) {
+                    console.warn("Feedback span not found for vocab input", input);
+                    return;
+                }
                 feedbackSpan.textContent = ''; 
                 input.style.backgroundColor = ''; 
                 input.style.borderColor = '#ddd';
@@ -1062,7 +1164,14 @@
                     const userAnswer = input.value.trim().toLowerCase();
                     const correctAnswer = correctWords[index].toLowerCase();
                     
-                    if (userAnswer === correctAnswer) {
+                    if (!userAnswer) { // If input is empty
+                        allWordsAttempted = false;
+                        input.style.backgroundColor = 'rgba(255, 193, 7, 0.1)'; // Warning color for empty
+                        input.style.borderColor = 'var(--warning)';
+                        feedbackSpan.textContent = ` Missing. (Answer: ${correctWords[index]})`;
+                        feedbackSpan.style.color = 'var(--warning)';
+                        allCorrectUserAnswers = false; // An empty field is not a correct user answer
+                    } else if (userAnswer === correctAnswer) {
                         input.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
                         input.style.borderColor = 'var(--success)';
                         feedbackSpan.textContent = ' Correct!';
@@ -1072,17 +1181,18 @@
                         input.style.borderColor = 'var(--danger)';
                         feedbackSpan.textContent = ` Incorrect. (Answer: ${correctWords[index]})`;
                         feedbackSpan.style.color = 'var(--danger)';
-                        allCorrect = false;
+                        allCorrectUserAnswers = false;
                     }
                 } else {
+                    // This case should ideally not happen if HTML matches correctWords length
                     input.disabled = true; 
                 }
             });
 
-            if(allCorrect && inputs.length >= correctWords.length) {
+            if(allCorrectUserAnswers && allWordsAttempted) {
                 alert("Great job! All vocabulary words are correct!");
-            } else if (!allCorrect) {
-                alert("Some vocabulary words are incorrect. The correct answers are now shown.");
+            } else if (!allCorrectUserAnswers || !allWordsAttempted) {
+                alert("Some vocabulary words are incorrect or missing. The correct answers are now shown or indicated.");
             }
         }
 
@@ -1102,46 +1212,28 @@
 
         function saveAllChanges() {
             const allEditableContent = {};
+            let activeEditsExist = false;
             
             document.querySelectorAll('.content-editable').forEach(el => {
                  if (el.id) { 
                     allEditableContent[el.id] = el.innerHTML;
                  } else {
+                    // For elements without ID, we could generate a path or skip them
+                    // For now, skipping elements without ID for simplicity in this example
                     console.warn("Editable element found without an ID. Skipping save for this element:", el);
+                 }
+                 if (el.getAttribute('contenteditable') === 'true' || el.dataset.currentlyEditing === 'true') {
+                    activeEditsExist = true;
                  }
             });
             
-            console.log("Saving ALL content:", allEditableContent);
-            alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console. Individual section edit states are not affected by this global save.`);
+            if (activeEditsExist) {
+                 alert("Warning: Some sections appear to be in edit mode. 'Save All' logs current content to console but doesn't finalize individual section edits. Please save or cancel individual sections first for proper state management.");
+            }
+            
+            console.log("Saving ALL content (innerHTML of .content-editable elements with IDs):", allEditableContent);
+            alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console.`);
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const imageUploads = [
-                { inputId: 'image-upload-page2', imgId: 'bible-story-img' },
-                { inputId: 'image-upload-page4', imgId: 'preposition-practice-img' }
-            ];
-            imageUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
-                } else {
-                    // console.warn(`Image input element not found: ${upload.inputId}`);
-                }
-            });
-
-            const audioUploads = [
-                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
-                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
-            ];
-            audioUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    inputElement.onchange = (event) => previewAudio(event, upload.audioId);
-                } else {
-                    // console.warn(`Audio input element not found: ${upload.inputId}`);
-                }
-            });
-        });
     </script>
 </body>
 </html>
