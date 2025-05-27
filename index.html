@@ -76,22 +76,46 @@
             position: relative;
         }
         
-        .edit-btn {
+        .edit-controls {
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: var(--accent);
+            display: flex;
+            gap: 5px; 
+        }
+        
+        .edit-controls button {
             color: white;
             border: none;
             border-radius: 4px;
             padding: 5px 10px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            transition: background-color 0.3s;
+            display: flex; 
+            align-items: center;
+            gap: 5px; 
         }
+        .edit-controls button i {
+            font-size: 0.8rem; 
+        }
+
+        .edit-btn-section { background-color: var(--accent); }
+        .edit-btn-section:hover:not(:disabled) { background-color: var(--secondary); }
+
+        .save-btn-section { background-color: var(--success); }
+        .save-btn-section:hover:not(:disabled) { background-color: #218838; }
+
+        .cancel-btn-section { background-color: var(--danger); }
+        .cancel-btn-section:hover:not(:disabled) { background-color: #c82333; }
         
-        .edit-btn:hover {
-            background-color: var(--secondary);
+        .edit-controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
         }
         
         .content-editable {
@@ -101,12 +125,12 @@
             transition: all 0.3s;
         }
         
-        .content-editable:hover {
+        .content-editable:hover:not([contenteditable="true"]) {
             border-color: var(--accent);
             background-color: rgba(79, 195, 247, 0.05);
         }
         
-        .content-editable:focus {
+        .content-editable[contenteditable="true"] {
             outline: none;
             border: 1px solid var(--accent);
             background-color: rgba(79, 195, 247, 0.1);
@@ -322,6 +346,7 @@
             padding: 15px;
             margin: 20px 0;
             font-style: italic;
+            position: relative;
         }
         
         .verse-ref {
@@ -354,35 +379,22 @@
             font-size: 0.9rem;
         }
         
-        /* Hide all pages by default */
-        .page {
-            display: none;
-        }
-        
-        /* Show only the active page */
-        .page.active {
-            display: block;
-        }
+        .page { display: none; }
+        .page.active { display: block; }
         
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
+            .container { padding: 15px; }
+            header { padding: 15px 0; }
+            h1 { font-size: 1.8rem; }
+            .lesson-section { padding: 15px; }
+            .quiz-options { grid-template-columns: 1fr; }
+            .edit-controls {
+                top: 10px; 
+                right: 10px;
             }
-            
-            header {
-                padding: 15px 0;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .lesson-section {
-                padding: 15px;
-            }
-            
-            .quiz-options {
-                grid-template-columns: 1fr;
+            .edit-controls button {
+                padding: 4px 8px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -398,24 +410,36 @@
         <!-- Page 1: Introduction -->
         <div class="page active" id="page1">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Pray, Review, and Preview</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p1-prayer-review" contenteditable="false">
                     <p>Let's begin our lesson with prayer. Dear Lord, thank you for this opportunity to learn English and your Word. Help us to understand your laws and how to use prepositions correctly. Amen.</p>
                 </div>
                 
                 <div class="verse-box">
-                    <div class="content-editable" contenteditable="false">
+                    <div class="edit-controls">
+                        <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                        <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                    <div class="content-editable" id="p1-versebox-1peter" contenteditable="false">
                         "Be holy in everything you do, just as God is holy. He is the one who chose you." - 1 Peter 1:15 ERV
                     </div>
-                    <div class="edit-btn" onclick="toggleEdit(this.parentElement.querySelector('.content-editable'))"><i class="fas fa-edit"></i></div>
                 </div>
             </section>
             
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Today's Learning Objectives</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p1-learning-objectives" contenteditable="false">
                     <p>By the end of this lesson, you will be able to:</p>
                     <ul>
                         <li>Use prepositions of place correctly in sentences</li>
@@ -437,9 +461,13 @@
         <!-- Page 2: Bible Reading -->
         <div class="page" id="page2">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Bible Reading: Moses Gives God's Laws</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p2-bible-reading-main" contenteditable="false">
                     <p>Today we'll read from Exodus 3:9-12; 5:1-11; 12:21-42; 20:1-17</p>
                     <p><strong>Theme:</strong> Where is it?</p>
                 </div>
@@ -454,9 +482,13 @@
             </section>
             
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Bible Story Summary</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p2-bible-story-summary" contenteditable="false">
                     <p>Four hundred thirty (430) years passed. God's people grew in number. The new king of Egypt made them his slaves and was not kind to them.</p>
                     <p>Then God sent Moses to bring his people out of Egypt. Moses did many miracles to set them free. Moses led the people to a mountain.</p>
                     <p>God loved the people he made. He wanted them to live good, holy lives. So he gave them some laws. These laws help people to live the way God wants.</p>
@@ -473,9 +505,13 @@
         <!-- Page 3: Pronunciation and Grammar -->
         <div class="page" id="page3">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Pronunciation Practice: /L/ and /H/ Sounds</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p3-pronunciation-practice" contenteditable="false">
                     <p>Let's practice these sounds that appear in our prepositions:</p>
                     <ul>
                         <li><strong>/L/ sound:</strong> love, law, Lord, lead, holy</li>
@@ -492,7 +528,11 @@
                     <button class="upload-btn" onclick="document.getElementById('audio-upload-page3').click()"><i class="fas fa-upload"></i> Change Audio</button>
                     <input type="file" id="audio-upload-page3" accept="audio/*" style="display: none;" onchange="previewAudio(event, 'pronunciation-audio')">
                     
-                    <div class="content-editable" contenteditable="false">
+                    <!-- This content-editable is part of an activity. If it needs its own edit controls, they'd be placed here.
+                         Otherwise, the section's edit controls target "p3-pronunciation-practice".
+                         For simplicity, we'll assume the section's controls are for the main text above.
+                         If you want to edit this specific part, you'd add another <div class="edit-controls"> here. -->
+                    <div class="content-editable" id="p3-listen-repeat-instructions" contenteditable="false"> 
                         <p>Repeat after the audio:</p>
                         <ol>
                             <li>The Lord loves and helps us.</li>
@@ -504,9 +544,13 @@
             </section>
             
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Grammar: Prepositions of Place</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p3-grammar-prepositions" contenteditable="false">
                     <p>Prepositions tell us <strong>where</strong> something is. Today we'll practice:</p>
                     <ul>
                         <li>in, on, at</li>
@@ -527,9 +571,13 @@
         <!-- Page 4: Interactive Practice -->
         <div class="page" id="page4">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Interactive Practice: Where Is It?</h2>
-                
+                <!-- The section's edit button will target p4-quiz-instructions as it's the first .content-editable for the instructions -->
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-eye"></i> What Do You See?</div>
                     <div class="image-container">
@@ -540,7 +588,7 @@
                     
                     <div class="quiz-container">
                         <div class="quiz-question">
-                            <div class="content-editable" contenteditable="false">
+                            <div class="content-editable" id="p4-quiz-instructions" contenteditable="false">
                                 <p>Complete the sentences about the picture:</p>
                             </div>
                             <ol>
@@ -579,12 +627,17 @@
         <!-- Page 5: Drag and Drop Activity -->
         <div class="page" id="page5">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Drag and Drop Prepositions</h2>
-                
+                 <div class="content-editable" id="p5-drag-drop-instructions" contenteditable="false">
+                    <p>Drag the prepositions to complete the sentences:</p>
+                </div>
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-arrows-alt"></i> Drag the Prepositions</div>
-                    <p>Drag the prepositions to complete the sentences:</p>
                     
                     <div class="drag-drop-container">
                         <div class="draggable" draggable="true" data-word="on">on</div>
@@ -604,7 +657,7 @@
                     <div class="dropzone" id="dropzone-3" data-correct="above">
                         <p>3. The sun is <span class="drop-target"></span> the land.</p>
                     </div>
-                    <div class="dropzone" id="dropzone-4" data-correct="at">
+                     <div class="dropzone" id="dropzone-4" data-correct="at">
                         <p>4. The people are <span class="drop-target"></span> the park.</p>
                     </div>
                     <div class="dropzone" id="dropzone-5" data-correct="beside">
@@ -629,9 +682,13 @@
         <!-- Page 6: Vocabulary and Conclusion -->
         <div class="page" id="page6">
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Vocabulary Review</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p6-vocab-review-instructions" contenteditable="false">
                     <p>Listen and write these words:</p>
                 </div>
                 
@@ -646,7 +703,9 @@
                     
                     <div class="quiz-container">
                         <div class="quiz-question">
-                            <div class="content-editable" contenteditable="false">
+                             <!-- This content-editable is part of an activity. If it needs its own edit controls, they'd be placed here.
+                                  Otherwise, the section's edit controls target "p6-vocab-review-instructions". -->
+                            <div class="content-editable" id="p6-listen-write-instructions" contenteditable="false">
                                 <p>Write one word per line as you hear them:</p>
                             </div>
                             <div id="vocab-words" style="column-count: 2; column-gap: 30px;">
@@ -675,9 +734,13 @@
             </section>
             
             <section class="lesson-section">
-                <button class="edit-btn" onclick="toggleEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                <div class="edit-controls">
+                    <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                    <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                </div>
                 <h2>Lesson Summary</h2>
-                <div class="content-editable" contenteditable="false">
+                <div class="content-editable" id="p6-lesson-summary" contenteditable="false">
                     <p>Today we learned:</p>
                     <ul>
                         <li>How to use prepositions of place correctly</li>
@@ -688,10 +751,14 @@
                 </div>
                 
                 <div class="verse-box">
-                    <div class="content-editable" contenteditable="false">
+                    <div class="edit-controls">
+                        <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
+                        <button class="cancel-btn-section hidden" onclick="cancelSectionChanges(this)"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                    <div class="content-editable" id="p6-versebox-psalm" contenteditable="false">
                         "His love for his followers is as high above us as heaven is above the earth." - Psalm 103:11 ERV
                     </div>
-                    <div class="edit-btn" onclick="toggleEdit(this.parentElement.querySelector('.content-editable'))"><i class="fas fa-edit"></i></div>
                 </div>
             </section>
             
@@ -719,8 +786,12 @@
         function navigateTo(pageNumber) {
             if (pageNumber < 1 || pageNumber > totalPages) return;
             
-            document.getElementById(`page${currentPage}`).classList.remove('active');
-            document.getElementById(`page${pageNumber}`).classList.add('active');
+            const currentPageElement = document.getElementById(`page${currentPage}`);
+            const nextPageElement = document.getElementById(`page${pageNumber}`);
+
+            if (currentPageElement) currentPageElement.classList.remove('active');
+            if (nextPageElement) nextPageElement.classList.add('active');
+            
             currentPage = pageNumber;
             
             document.querySelectorAll('.page-indicator').forEach(indicator => {
@@ -729,44 +800,112 @@
             
             window.scrollTo(0, 0);
         }
-        
-        // Toggle edit mode for sections
-        function toggleEdit(button) {
-            const section = button.closest('.lesson-section') || button.closest('.verse-box');
-            const editable = section.querySelector('.content-editable');
+
+        // --- NEW EDITING FUNCTIONS ---
+        function enableEdit(editBtn) {
+            const controlsContainer = editBtn.parentElement;
+            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
             
-            const currentlyEditable = editable.getAttribute('contenteditable') === 'true';
-            editable.setAttribute('contenteditable', !currentlyEditable);
-            
-            if (!currentlyEditable) {
-                editable.focus();
-                button.innerHTML = '<i class="fas fa-check"></i> Done';
-                button.style.backgroundColor = 'var(--success)';
-            } else {
-                button.innerHTML = '<i class="fas fa-edit"></i> Edit';
-                button.style.backgroundColor = 'var(--accent)';
+            if (!section) {
+                console.error("Edit button's control container is not within a .lesson-section or .verse-box.", controlsContainer);
+                return;
             }
+            
+            const editable = section.querySelector('.content-editable'); 
+            if (!editable) {
+                console.warn("No .content-editable element found in this section.", section);
+                controlsContainer.querySelectorAll('button').forEach(b => b.disabled = true);
+                if(editBtn) editBtn.innerHTML = '<i class="fas fa-eye-slash"></i> No Edit Area';
+                return;
+            }
+
+            editable.setAttribute('data-original-content', editable.innerHTML);
+            editable.setAttribute('contenteditable', 'true');
+            editable.focus();
+
+            const saveBtn = controlsContainer.querySelector('.save-btn-section');
+            const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
+
+            if(editBtn) editBtn.classList.add('hidden');
+            if (saveBtn) saveBtn.classList.remove('hidden');
+            if (cancelBtn) cancelBtn.classList.remove('hidden');
         }
 
+        function saveSectionChanges(saveBtn) {
+            const controlsContainer = saveBtn.parentElement;
+            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
+            
+            if (!section) return;
+            const editable = section.querySelector('.content-editable');
+            if (!editable) return;
+
+            editable.setAttribute('contenteditable', 'false');
+            editable.removeAttribute('data-original-content'); 
+
+            console.log(`Section content for '${editable.id || 'unknown_section'}' saved:`, editable.innerHTML);
+
+            const editBtn = controlsContainer.querySelector('.edit-btn-section');
+            const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
+
+            if(saveBtn) saveBtn.classList.add('hidden');
+            if (cancelBtn) cancelBtn.classList.add('hidden');
+            if (editBtn) editBtn.classList.remove('hidden');
+        }
+
+        function cancelSectionChanges(cancelBtn) {
+            const controlsContainer = cancelBtn.parentElement;
+            const section = controlsContainer.closest('.lesson-section') || controlsContainer.closest('.verse-box');
+
+            if (!section) return;
+            const editable = section.querySelector('.content-editable');
+            if (!editable) return;
+
+            const originalContent = editable.getAttribute('data-original-content');
+            if (originalContent !== null) {
+                editable.innerHTML = originalContent;
+            }
+            editable.setAttribute('contenteditable', 'false');
+            editable.removeAttribute('data-original-content');
+
+            const editBtn = controlsContainer.querySelector('.edit-btn-section');
+            const saveBtn = controlsContainer.querySelector('.save-btn-section');
+
+            if(cancelBtn) cancelBtn.classList.add('hidden');
+            if (saveBtn) saveBtn.classList.add('hidden');
+            if (editBtn) editBtn.classList.remove('hidden');
+        }
+        
         // Preview uploaded image
         function previewImage(event, imgId) {
             const reader = new FileReader();
+            const output = document.getElementById(imgId);
+            if (!output) {
+                console.error("Image element not found:", imgId);
+                return;
+            }
             reader.onload = function(){
-                const output = document.getElementById(imgId);
                 output.src = reader.result;
             };
-            reader.readAsDataURL(event.target.files[0]);
+            if (event.target.files && event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
         }
 
         // Preview uploaded audio
         function previewAudio(event, audioId) {
             const reader = new FileReader();
             const audioPlayer = document.getElementById(audioId);
+             if (!audioPlayer) {
+                console.error("Audio player element not found:", audioId);
+                return;
+            }
             reader.onload = function(e) {
                 audioPlayer.src = e.target.result;
-                audioPlayer.load(); // Important to reload the audio element
+                audioPlayer.load();
             };
-            reader.readAsDataURL(event.target.files[0]);
+            if (event.target.files && event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
         }
         
         // Drag and drop functionality
@@ -779,35 +918,36 @@
             draggables.forEach(draggable => {
                 draggable.addEventListener('dragstart', function() {
                     draggedItem = this;
-                    setTimeout(() => { this.style.opacity = '0.4'; }, 0);
+                    setTimeout(() => { if(this) this.style.opacity = '0.4'; }, 0);
                 });
                 
                 draggable.addEventListener('dragend', function() {
-                    this.style.opacity = '1';
-                    draggedItem = null; // Reset draggedItem
+                    if(this) this.style.opacity = '1';
+                    draggedItem = null;
                 });
             });
             
             dropTargets.forEach(target => {
                 target.addEventListener('dragover', function(e) {
-                    e.preventDefault(); // Necessary to allow dropping
-                    this.closest('.dropzone').classList.add('highlight');
+                    e.preventDefault(); 
+                    const dropzone = this.closest('.dropzone');
+                    if(dropzone) dropzone.classList.add('highlight');
                 });
                 
                 target.addEventListener('dragleave', function() {
-                    this.closest('.dropzone').classList.remove('highlight');
+                    const dropzone = this.closest('.dropzone');
+                    if(dropzone) dropzone.classList.remove('highlight');
                 });
                 
                 target.addEventListener('drop', function(e) {
                     e.preventDefault();
-                    this.closest('.dropzone').classList.remove('highlight');
+                    const dropzone = this.closest('.dropzone');
+                    if(dropzone) dropzone.classList.remove('highlight');
                     
                     if (draggedItem) {
-                        // Clear previous content and styling if any
                         this.innerHTML = '';
                         this.style.color = '';
                         this.style.fontWeight = '';
-
                         this.textContent = draggedItem.textContent;
                         this.setAttribute('data-answer', draggedItem.getAttribute('data-word'));
                     }
@@ -821,23 +961,24 @@
             
             dropzones.forEach(zone => {
                 const target = zone.querySelector('.drop-target');
+                if (!target) return;
+
                 const userAnswer = target.getAttribute('data-answer');
                 const correctAnswer = zone.getAttribute('data-correct');
                 
-                // Clear previous feedback text
-                const feedbackSpan = zone.querySelector('.feedback-text-dd');
-                if (feedbackSpan) feedbackSpan.remove();
+                const feedbackSpanOld = zone.querySelector('.feedback-text-dd');
+                if (feedbackSpanOld) feedbackSpanOld.remove();
 
                 if (userAnswer === correctAnswer) {
                     target.style.color = 'var(--success)';
                     target.style.fontWeight = 'bold';
                 } else {
                     target.style.color = 'var(--danger)';
-                    target.style.fontWeight = 'normal'; // Reset font weight
+                    target.style.fontWeight = 'normal';
                     allCorrect = false;
                     
                     const feedback = document.createElement('span');
-                    feedback.classList.add('feedback-text-dd'); // Add class for easy removal
+                    feedback.classList.add('feedback-text-dd'); 
                     feedback.style.color = 'var(--danger)';
                     feedback.style.marginLeft = '10px';
                     if (userAnswer) {
@@ -870,12 +1011,13 @@
         
         function checkPrepositions() {
             const selects = document.querySelectorAll('.preposition-select');
-            const correctAnswers = ['at', 'behind', 'in']; // Assuming these are the correct answers based on the image context
+            const correctAnswers = ['at', 'behind', 'in']; 
             let allCorrect = true;
             
             selects.forEach((select, index) => {
                 const feedbackSpan = select.parentElement.querySelector('.feedback-text');
-                feedbackSpan.textContent = ''; // Clear previous feedback
+                if (!feedbackSpan) return;
+                feedbackSpan.textContent = '';
 
                 if (select.value === correctAnswers[index]) {
                     select.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
@@ -904,16 +1046,17 @@
                 'around', 'below', 'across', 
                 'above', 'land', 'help', 
                 'have', 'Lord', 'love'
-            ]; // These are example words. Replace with actual words from audio/vocabulary.mp3
+            ]; 
             
             const inputs = document.querySelectorAll('.vocab-input');
             let allCorrect = true;
 
             inputs.forEach((input, index) => {
-                const feedbackSpan = input.nextElementSibling; // Assuming span is right after input
-                feedbackSpan.textContent = ''; // Clear previous feedback
-                input.style.backgroundColor = ''; // Reset background
-                input.style.borderColor = '#ddd'; // Reset border
+                const feedbackSpan = input.nextElementSibling; 
+                if (!feedbackSpan) return;
+                feedbackSpan.textContent = ''; 
+                input.style.backgroundColor = ''; 
+                input.style.borderColor = '#ddd';
 
                 if (index < correctWords.length) {
                     const userAnswer = input.value.trim().toLowerCase();
@@ -932,8 +1075,6 @@
                         allCorrect = false;
                     }
                 } else {
-                    // Handle cases where there are more input fields than correct words (optional)
-                    // For now, we'll just ignore extra fields or you can mark them as not applicable
                     input.disabled = true; 
                 }
             });
@@ -959,34 +1100,21 @@
             });
         }
 
-        // Save all changes (conceptual, actual saving would require backend)
         function saveAllChanges() {
-            // This function would ideally collect all content from contenteditable divs
-            // and other interactive elements and send it to a server.
-            // For this example, we'll just log it to the console.
+            const allEditableContent = {};
             
-            const allEditableContent = [];
-            document.querySelectorAll('.content-editable[contenteditable="true"], .content-editable:not([contenteditable])').forEach((el, i) => {
-                 allEditableContent.push({
-                    id: `editable-${i}`,
-                    html: el.innerHTML
-                 });
+            document.querySelectorAll('.content-editable').forEach(el => {
+                 if (el.id) { 
+                    allEditableContent[el.id] = el.innerHTML;
+                 } else {
+                    console.warn("Editable element found without an ID. Skipping save for this element:", el);
+                 }
             });
             
-            console.log("Saving content:", allEditableContent);
-            alert("Changes have been 'saved' to the console. In a real application, this would be sent to a server.");
-
-            // Revert all edit buttons to 'Edit' state
-             document.querySelectorAll('.edit-btn').forEach(button => {
-                const section = button.closest('.lesson-section') || button.closest('.verse-box');
-                const editable = section.querySelector('.content-editable');
-                if (editable.getAttribute('contenteditable') === 'true') {
-                    toggleEdit(button); // Toggle back to non-editable state
-                }
-            });
+            console.log("Saving ALL content:", allEditableContent);
+            alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console. Individual section edit states are not affected by this global save.`);
         }
 
-        // Initialize image and audio upload handlers
         document.addEventListener('DOMContentLoaded', () => {
             const imageUploads = [
                 { inputId: 'image-upload-page2', imgId: 'bible-story-img' },
@@ -996,6 +1124,8 @@
                 const inputElement = document.getElementById(upload.inputId);
                 if (inputElement) {
                     inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                } else {
+                    // console.warn(`Image input element not found: ${upload.inputId}`);
                 }
             });
 
@@ -1007,10 +1137,11 @@
                 const inputElement = document.getElementById(upload.inputId);
                 if (inputElement) {
                     inputElement.onchange = (event) => previewAudio(event, upload.audioId);
+                } else {
+                    // console.warn(`Audio input element not found: ${upload.inputId}`);
                 }
             });
         });
-
     </script>
 </body>
 </html>
