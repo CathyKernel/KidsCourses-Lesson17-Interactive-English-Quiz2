@@ -312,7 +312,21 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-                
+        
+        /* Style for select elements in quizzes for consistency */
+        .preposition-select, .vocab-input {
+            padding: 8px;
+            border: 1px solid #ddd; /* Default neutral border */
+            border-radius: 4px;
+            margin-right: 5px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .preposition-select:focus, .vocab-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.25);
+        }
+
         .feedback-text { 
             margin-left: 8px;
             font-size: 0.9em;
@@ -391,7 +405,7 @@
             header { padding: 15px 0; }
             h1 { font-size: 1.8rem; }
             .lesson-section { padding: 15px; }
-            .quiz-options { grid-template-columns: 1fr; }
+            /* .quiz-options { grid-template-columns: 1fr; } */ /* This class was not found, commented out */
             .edit-controls {
                 top: 10px; 
                 right: 10px;
@@ -568,7 +582,7 @@
             <div class="page-indicator">Page 3 of 6</div>
         </div>
         
-        <!-- Page 4: Interactive Practice (MODIFIED for 3 images) -->
+        <!-- Page 4: Interactive Practice (MODIFIED) -->
         <div class="page" id="page4">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -580,7 +594,6 @@
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-eye"></i> What Do You See? (Choose from 3 images)</div>
                     
-                    <!-- Image Gallery for 3 Uploads -->
                     <div class="image-gallery-container">
                         <div class="image-upload-slot">
                             <img src="https://freebibleimages.org/slides/parables/parable-good-samaritan-03.jpg" alt="Preposition scene 1" id="preposition-practice-img-1">
@@ -605,24 +618,30 @@
                                 <p>Complete the sentences (you can refer to any of the images above):</p>
                             </div>
                             <ol>
-                                <li>The people are <select class="preposition-select">
-                                    <option value="">Choose...</option>
-                                    <option value="at">at</option>
-                                    <option value="in">in</option>
-                                    <option value="on">on</option>
-                                </select> the park. <span class="feedback-text"></span></li>
-                                <li>The tree is <select class="preposition-select">
-                                    <option value="">Choose...</option>
-                                    <option value="behind">behind</option>
-                                    <option value="in front of">in front of</option>
-                                    <option value="beside">beside</option>
-                                </select> the woman. <span class="feedback-text"></span></li>
-                                <li>The bread is <select class="preposition-select">
-                                    <option value="">Choose...</option>
-                                    <option value="in">in</option>
-                                    <option value="on">on</option>
-                                    <option value="under">under</option>
-                                </select> the basket. <span class="feedback-text"></span></li>
+                                <li>The people are 
+                                    <select class="preposition-select" data-correct-answer="at">
+                                        <option value="">Choose...</option>
+                                        <option value="at">at</option>
+                                        <option value="in">in</option>
+                                        <option value="on">on</option>
+                                    </select> the park. <span class="feedback-text"></span>
+                                </li>
+                                <li>The tree is 
+                                    <select class="preposition-select" data-correct-answer="behind">
+                                        <option value="">Choose...</option>
+                                        <option value="behind">behind</option>
+                                        <option value="in front of">in front of</option>
+                                        <option value="beside">beside</option>
+                                    </select> the woman. <span class="feedback-text"></span>
+                                </li>
+                                <li>The bread is 
+                                    <select class="preposition-select" data-correct-answer="in">
+                                        <option value="">Choose...</option>
+                                        <option value="in">in</option>
+                                        <option value="on">on</option>
+                                        <option value="under">under</option>
+                                    </select> the basket. <span class="feedback-text"></span>
+                                </li>
                             </ol>
                             <button class="btn" onclick="checkPrepositions()">Check Answers</button>
                         </div>
@@ -780,7 +799,7 @@
     </div>
 
     <script>
-        // Navigation between pages (no changes)
+        // Navigation between pages
         let currentPage = 1;
         const totalPages = 6;
         function navigateTo(pageNumber) {
@@ -796,7 +815,7 @@
             window.scrollTo(0, 0);
         }
 
-        // --- EDITING FUNCTIONS (No changes) ---
+        // --- EDITING FUNCTIONS ---
         function enableEdit(triggerElement) {
             let controlsContainer, section, editableToActivate, editBtnAssociated;
             if (triggerElement.classList.contains('edit-btn-section')) { 
@@ -898,7 +917,7 @@
             if (editBtn) editBtn.classList.remove('hidden');
         }
         
-        // --- IMAGE AND AUDIO PREVIEW (previewImage is generic and fine) ---
+        // --- IMAGE AND AUDIO PREVIEW ---
         function previewImage(event, imgId) {
             const reader = new FileReader();
             const output = document.getElementById(imgId);
@@ -929,89 +948,10 @@
             }
         }
         
-        // --- DRAG AND DROP FUNCTIONALITY (No changes from previous optimization) ---
+        // --- DRAG AND DROP FUNCTIONALITY ---
         let draggedItem = null; 
         const originalDraggablePoolId = 'drag-drop-pool';
-        // Functions: addDraggableEvents, handleDragStart, handleDragEnd, handleDragOver, 
-        // handleDragLeave, handleDragLeavePool, handleDropOnTarget, handleDropOnPool,
-        // checkDragDrop, resetDragDrop remain the same as in the previous response.
-        // ... (These functions are not repeated here for brevity but are assumed to be present)
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Click-to-edit for content-editable divs
-            document.querySelectorAll('.content-editable').forEach(editableDiv => {
-                editableDiv.addEventListener('click', function(event) {
-                    if (this.getAttribute('contenteditable') === 'true') return;
-                    enableEdit(this); 
-                });
-            });
-
-            // Drag and Drop Setup (Page 5)
-            const draggables = document.querySelectorAll('#page5 .draggable'); // Scope to page 5
-            const dropTargets = document.querySelectorAll('#page5 .drop-target'); // Scope to page 5
-            const dragDropPool = document.getElementById(originalDraggablePoolId);
-            
-            draggables.forEach(draggable => {
-                addDraggableEvents(draggable);
-            });
-            
-            dropTargets.forEach(target => {
-                target.addEventListener('dragover', handleDragOver);
-                target.addEventListener('dragleave', handleDragLeave);
-                target.addEventListener('drop', handleDropOnTarget);
-            });
-
-            if (dragDropPool) {
-                dragDropPool.addEventListener('dragover', handleDragOver);
-                dragDropPool.addEventListener('dragleave', handleDragLeavePool);
-                dragDropPool.addEventListener('drop', handleDropOnPool);
-            }
-            
-            // Image and Audio upload initializers
-            // General image uploads (e.g., Page 2)
-            const generalImageUploads = [
-                { inputId: 'image-upload-page2', imgId: 'bible-story-img' }
-            ];
-            generalImageUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    // If onchange is in HTML, this isn't strictly needed, but good practice if moving to JS-only event handling
-                    if (!inputElement.onchange) { 
-                        inputElement.onchange = (event) => previewImage(event, upload.imgId);
-                    }
-                }
-            });
-
-            // Specific setup for Page 4 multiple image uploads
-            const page4ImageInputs = [
-                { inputId: 'image-upload-page4-1', imgId: 'preposition-practice-img-1' },
-                { inputId: 'image-upload-page4-2', imgId: 'preposition-practice-img-2' },
-                { inputId: 'image-upload-page4-3', imgId: 'preposition-practice-img-3' }
-            ];
-            page4ImageInputs.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
-                }
-            });
-
-            // Audio uploads
-            const audioUploads = [
-                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
-                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
-            ];
-            audioUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                     if (!inputElement.onchange) {
-                        inputElement.onchange = (event) => previewAudio(event, upload.audioId);
-                    }
-                }
-            });
-        });
         
-        // --- DRAG AND DROP FUNCTIONS (FROM PREVIOUS OPTIMIZATION, ENSURE THEY ARE HERE) ---
         function addDraggableEvents(draggable) {
             draggable.addEventListener('dragstart', handleDragStart);
             draggable.addEventListener('dragend', handleDragEnd);
@@ -1123,7 +1063,7 @@
         }
         
         function checkDragDrop() {
-            const dropzones = document.querySelectorAll('#page5 .dropzone'); // Scope to page 5
+            const dropzones = document.querySelectorAll('#page5 .dropzone');
             let allAreCorrect = true;
             let anyMissing = false;
             
@@ -1141,6 +1081,11 @@
                     const userAnswer = placedDraggableDiv.dataset.word;
                     if (userAnswer !== correctAnswer) {
                         allAreCorrect = false;
+                         placedDraggableDiv.style.borderColor = 'var(--danger)'; // Highlight incorrect ones
+                         placedDraggableDiv.style.backgroundColor = 'rgba(220, 53, 69, 0.15)';
+                    } else {
+                         placedDraggableDiv.style.borderColor = 'var(--success)'; // Highlight correct ones
+                         placedDraggableDiv.style.backgroundColor = 'rgba(40, 167, 69, 0.15)';
                     }
                 } else {
                     allAreCorrect = false;
@@ -1160,7 +1105,7 @@
         
         function resetDragDrop() {
             const dragDropPool = document.getElementById(originalDraggablePoolId);
-            const dropTargets = document.querySelectorAll('#page5 .drop-target'); // Scope to page 5
+            const dropTargets = document.querySelectorAll('#page5 .drop-target'); 
 
             dropTargets.forEach(targetSpan => {
                 const placedDraggableDiv = targetSpan.querySelector('.draggable');
@@ -1183,40 +1128,75 @@
             });
         }
         
-        // --- PREPOSITION SELECT QUIZ (PAGE 4) (No changes) ---
+        // --- PREPOSITION SELECT QUIZ (PAGE 4) (MODIFIED) ---
+        function checkIndividualPreposition(selectElement) {
+            const correctAnswer = selectElement.dataset.correctAnswer;
+            const feedbackSpan = selectElement.parentElement.querySelector('.feedback-text');
+
+            if (!feedbackSpan) {
+                console.warn("Feedback span not found for select:", selectElement);
+                return null; // Indicate an issue or unanswered if span is critical
+            }
+
+            feedbackSpan.textContent = ''; // Clear previous feedback
+            selectElement.style.backgroundColor = ''; // Reset background
+            selectElement.style.borderColor = '#ddd'; // Reset border to neutral
+
+            if (selectElement.value === "") {
+                feedbackSpan.textContent = ' Please choose.';
+                feedbackSpan.style.color = 'var(--warning)';
+                selectElement.style.borderColor = 'var(--warning)';
+                return null; // Unanswered
+            }
+
+            if (selectElement.value === correctAnswer) {
+                selectElement.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                selectElement.style.borderColor = 'var(--success)';
+                feedbackSpan.textContent = ' Correct!';
+                feedbackSpan.style.color = 'var(--success)';
+                return true; // Correct
+            } else {
+                selectElement.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                selectElement.style.borderColor = 'var(--danger)';
+                feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswer})`;
+                feedbackSpan.style.color = 'var(--danger)';
+                return false; // Incorrect
+            }
+        }
+
         function checkPrepositions() {
-            const selects = document.querySelectorAll('.preposition-select');
-            const correctAnswers = ['at', 'behind', 'in']; 
-            let allCorrect = true;
-            selects.forEach((select, index) => {
-                const feedbackSpan = select.parentElement.querySelector('.feedback-text');
-                if (!feedbackSpan) return;
-                feedbackSpan.textContent = ''; 
-                if (select.value === correctAnswers[index]) {
-                    select.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
-                    select.style.borderColor = 'var(--success)';
-                    feedbackSpan.textContent = ' Correct!';
-                    feedbackSpan.style.color = 'var(--success)';
-                } else {
-                    select.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-                    select.style.borderColor = 'var(--danger)';
-                    allCorrect = false;
-                    if (select.value) { 
-                        feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswers[index]})`;
-                    } else { 
-                         feedbackSpan.textContent = ` Please choose. (Correct: ${correctAnswers[index]})`;
-                    }
-                    feedbackSpan.style.color = 'var(--danger)';
+            const selects = document.querySelectorAll('#page4 .preposition-select');
+            let allAnsweredAndCorrect = true;
+            let hasIncorrect = false;
+            let hasUnanswered = false;
+
+            selects.forEach(select => {
+                const result = checkIndividualPreposition(select); // This also updates UI for each
+                if (result === null) { // Unanswered
+                    hasUnanswered = true;
+                    allAnsweredAndCorrect = false;
+                } else if (result === false) { // Incorrect
+                    hasIncorrect = true;
+                    allAnsweredAndCorrect = false;
                 }
             });
-            if (allCorrect) {
+
+            if (allAnsweredAndCorrect) {
                 alert('Excellent! All your preposition answers are correct!');
             } else {
-                 alert('Some preposition answers are incorrect or missing. Please review.');
+                let message = "Please review your answers.";
+                if (hasIncorrect && hasUnanswered) {
+                    message = "Some answers are incorrect and some questions are unanswered.";
+                } else if (hasIncorrect) {
+                    message = "Some answers are incorrect.";
+                } else if (hasUnanswered) {
+                    message = "Some questions are unanswered.";
+                }
+                alert(message + " Check the feedback next to each question.");
             }
         }
         
-        // --- VOCABULARY REVIEW (PAGE 6) (No changes) ---
+        // --- VOCABULARY REVIEW (PAGE 6) ---
         function showVocabAnswers() {
             const correctWords = [
                 'laws', 'between', 'under', 
@@ -1279,7 +1259,7 @@
             });
         }
 
-        // --- SAVE ALL CHANGES (General Content) (No changes) ---
+        // --- SAVE ALL CHANGES (General Content) ---
         function saveAllChanges() {
             const allEditableContent = {};
             let activeEditsExist = false;
@@ -1294,6 +1274,80 @@
             console.log("Saving ALL content (innerHTML of .content-editable elements with IDs):", allEditableContent);
             alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console. Implement actual save logic as needed.`);
         }
+
+        // --- DOMContentLoaded INITIALIZATIONS ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Click-to-edit for content-editable divs
+            document.querySelectorAll('.content-editable').forEach(editableDiv => {
+                editableDiv.addEventListener('click', function(event) {
+                    if (this.getAttribute('contenteditable') === 'true') return;
+                    enableEdit(this); 
+                });
+            });
+
+            // Drag and Drop Setup (Page 5)
+            const draggables = document.querySelectorAll('#page5 .draggable');
+            const dropTargets = document.querySelectorAll('#page5 .drop-target');
+            const dragDropPool = document.getElementById(originalDraggablePoolId);
+            
+            draggables.forEach(draggable => {
+                addDraggableEvents(draggable);
+            });
+            
+            dropTargets.forEach(target => {
+                target.addEventListener('dragover', handleDragOver);
+                target.addEventListener('dragleave', handleDragLeave);
+                target.addEventListener('drop', handleDropOnTarget);
+            });
+
+            if (dragDropPool) {
+                dragDropPool.addEventListener('dragover', handleDragOver);
+                dragDropPool.addEventListener('dragleave', handleDragLeavePool);
+                dragDropPool.addEventListener('drop', handleDropOnPool);
+            }
+            
+            // Image and Audio upload initializers
+            const generalImageUploads = [
+                { inputId: 'image-upload-page2', imgId: 'bible-story-img' }
+            ];
+            generalImageUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement && !inputElement.onchange) { 
+                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                }
+            });
+
+            const page4ImageInputs = [
+                { inputId: 'image-upload-page4-1', imgId: 'preposition-practice-img-1' },
+                { inputId: 'image-upload-page4-2', imgId: 'preposition-practice-img-2' },
+                { inputId: 'image-upload-page4-3', imgId: 'preposition-practice-img-3' }
+            ];
+            page4ImageInputs.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                }
+            });
+
+            const audioUploads = [
+                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
+                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
+            ];
+            audioUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement && !inputElement.onchange) {
+                    inputElement.onchange = (event) => previewAudio(event, upload.audioId);
+                }
+            });
+
+            // Setup for Page 4 Preposition Selects (Immediate Feedback)
+            const prepositionSelects = document.querySelectorAll('#page4 .preposition-select');
+            prepositionSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    checkIndividualPreposition(this); // 'this' refers to the select element
+                });
+            });
+        });
     </script>
 </body>
 </html>
