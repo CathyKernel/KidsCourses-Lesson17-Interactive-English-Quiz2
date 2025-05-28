@@ -14,6 +14,14 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
+
+            /* RGB versions for box-shadow focus rings */
+            --rgb-primary: 74, 111, 165;
+            --rgb-secondary: 22, 96, 136; 
+            --rgb-success: 40, 167, 69;
+            --rgb-danger: 220, 53, 69;
+            --rgb-accent: 79, 195, 247;
+            --rgb-btn-secondary-focus: 108, 117, 125; 
         }
         
         body {
@@ -87,31 +95,52 @@
         .edit-controls button {
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
+            border-radius: 6px; 
+            padding: 6px 12px; 
             cursor: pointer;
             font-size: 0.9rem;
-            transition: background-color 0.3s;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s; 
             display: flex; 
             align-items: center;
             gap: 5px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
         }
         .edit-controls button i {
             font-size: 0.8rem; 
         }
 
+        .edit-controls button:hover:not(:disabled) {
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+        }
+        .edit-controls button:active:not(:disabled) {
+            transform: translateY(0px); 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+         .edit-controls button:focus:not(:disabled) {
+            outline: none; 
+        }
+
+
         .edit-btn-section { background-color: var(--accent); }
-        .edit-btn-section:hover:not(:disabled) { background-color: var(--secondary); }
+        .edit-btn-section:hover:not(:disabled) { background-color: #29b6f6; } 
+        .edit-btn-section:focus:not(:disabled) { box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 2.5px rgba(var(--rgb-accent), 0.5); } 
+
 
         .save-btn-section { background-color: var(--success); }
         .save-btn-section:hover:not(:disabled) { background-color: #218838; }
+        .save-btn-section:focus:not(:disabled) { box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 2.5px rgba(var(--rgb-success), 0.5); } 
 
         .cancel-btn-section { background-color: var(--danger); }
         .cancel-btn-section:hover:not(:disabled) { background-color: #c82333; }
+        .cancel-btn-section:focus:not(:disabled) { box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 2.5px rgba(var(--rgb-danger), 0.5); } 
         
         .edit-controls button:disabled {
             background-color: #ccc;
+            color: #666; 
             cursor: not-allowed;
+            transform: none; 
+            box-shadow: none; 
         }
 
         .hidden {
@@ -137,7 +166,7 @@
             background-color: rgba(79, 195, 247, 0.1);
         }
         
-        .image-container { /* General style for single image containers */
+        .image-container { 
             text-align: center;
             margin: 20px 0;
             position: relative;
@@ -155,7 +184,6 @@
             transform: scale(1.02);
         }
 
-        /* Styles for the image gallery on Page 4 */
         .image-gallery-container {
             display: flex;
             flex-wrap: wrap; 
@@ -164,43 +192,66 @@
             margin-bottom: 20px;
         }
 
-        .image-gallery-container .image-upload-slot { /* Changed class name for clarity */
+        .image-gallery-container .image-upload-slot {
             flex: 1 1 300px; 
             max-width: 32%; 
             box-shadow: 0 1px 5px rgba(0,0,0,0.1); 
-            padding: 15px; /* Increased padding */
-            border-radius: 8px; /* Increased radius */
+            padding: 15px; 
+            border-radius: 8px; 
             background-color: #fff;
-            text-align: center; /* Center content of slot */
-            display: flex; /* Added for better internal alignment */
-            flex-direction: column; /* Stack image and button vertically */
-            align-items: center; /* Center items horizontally */
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
         }
 
         .image-gallery-container .image-upload-slot img {
             max-width: 100%;
-            height: auto; /* Maintain aspect ratio */
-            min-height: 150px; /* Minimum height for placeholder */
-            object-fit: cover; /* Cover the area, might crop */
+            height: auto; 
+            min-height: 150px; 
+            object-fit: cover; 
             border-radius: 6px; 
             margin-bottom: 15px; 
-            background-color: #f0f0f0; /* Placeholder background */
+            background-color: #f0f0f0; 
         }
         
         .upload-btn {
-            display: inline-block;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
             margin-top: 10px;
             padding: 8px 15px;
             background-color: var(--primary);
             color: white;
-            border-radius: 4px;
+            border: none; 
+            border-radius: 6px; 
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            font-weight: 500; 
+            transition: all 0.2s ease-in-out; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
         }
         
-        .upload-btn:hover {
+        .upload-btn:hover:not(:disabled) {
             background-color: var(--secondary);
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+        }
+        .upload-btn:focus:not(:disabled) {
+            outline: none; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 2.5px rgba(var(--rgb-primary), 0.5); 
+        }
+        .upload-btn:active:not(:disabled) {
+            transform: translateY(0px); 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .upload-btn:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .interactive-activity {
@@ -313,18 +364,17 @@
             border-bottom: 1px solid #eee;
         }
         
-        /* Style for select elements in quizzes for consistency */
         .preposition-select, .vocab-input {
             padding: 8px;
-            border: 1px solid #ddd; /* Default neutral border */
+            border: 1px solid #ddd; 
             border-radius: 4px;
             margin-right: 5px;
-            transition: border-color 0.3s, background-color 0.3s;
+            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s; 
         }
         .preposition-select:focus, .vocab-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(var(--rgb-primary), 0.25); 
         }
 
         .feedback-text { 
@@ -337,32 +387,58 @@
         }
         
         .btn {
-            display: inline-block;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
             padding: 10px 20px;
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px; 
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s;
+            font-weight: 500; 
+            text-decoration: none;
+            transition: all 0.2s ease-in-out; 
             text-align: center;
             margin-top: 5px; 
             margin-right: 5px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         }
         
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             background-color: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+        }
+        .btn:focus:not(:disabled) {
+            outline: none; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(var(--rgb-primary), 0.35); 
+        }
+        .btn:active:not(:disabled) {
+            transform: translateY(0px); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            color: #666; 
+            cursor: not-allowed;
+            transform: none; 
+            box-shadow: none; 
         }
         
         .btn-secondary {
             background-color: #6c757d;
+            color: white; 
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background-color: #5a6268;
+        }
+        .btn-secondary:focus:not(:disabled) {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(var(--rgb-btn-secondary-focus), 0.45); 
         }
         
         .save-all-btn {
@@ -372,8 +448,11 @@
             font-size: 1.1rem;
         }
         
-        .save-all-btn:hover {
+        .save-all-btn:hover:not(:disabled) {
             background-color: #218838;
+        }
+        .save-all-btn:focus:not(:disabled) {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(var(--rgb-success), 0.45); 
         }
         
         .verse-box {
@@ -394,6 +473,26 @@
         
         .page { display: none; }
         .page.active { display: block; }
+
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 1px solid #e0e0e0; 
+        }
+        /* Specific style for first page navigation to push Next button to the right */
+        #page1 .page-navigation {
+            justify-content: flex-end;
+        }
+
+        .page-indicator {
+            text-align: center;
+            margin-top: 15px; 
+            color: #777;
+            font-size: 0.9em;
+        }
         
         @media (max-width: 992px) { 
             .image-gallery-container .image-upload-slot {
@@ -405,14 +504,16 @@
             header { padding: 15px 0; }
             h1 { font-size: 1.8rem; }
             .lesson-section { padding: 15px; }
-            /* .quiz-options { grid-template-columns: 1fr; } */ /* This class was not found, commented out */
             .edit-controls {
                 top: 10px; 
                 right: 10px;
             }
             .edit-controls button {
-                padding: 4px 8px;
+                padding: 5px 10px; 
                 font-size: 0.8rem;
+            }
+            .edit-controls button i {
+                font-size: 0.7rem;
             }
             .dropzone p {
                 flex-direction: column; 
@@ -421,8 +522,16 @@
             .drop-target {
                 margin: 5px 0; 
             }
-            .image-gallery-container .image-upload-slot { /* Single column on small screens */
+            .image-gallery-container .image-upload-slot { 
                 max-width: 100%; 
+            }
+            .btn { 
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            .save-all-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -435,7 +544,7 @@
             <p>Prepositions of Place & God's Laws</p>
         </header>
         
-        <!-- Page 1: Introduction (No changes) -->
+        <!-- Page 1: Introduction (MODIFIED Previous button removed) -->
         <div class="page active" id="page1">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -477,13 +586,13 @@
                 </div>
             </section>
             <div class="page-navigation">
-                <button class="btn btn-secondary" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                <!-- Previous button removed as requested for the first page -->
                 <button class="btn" onclick="navigateTo(2)">Next <i class="fas fa-arrow-right"></i></button>
             </div>
             <div class="page-indicator">Page 1 of 6</div>
         </div>
         
-        <!-- Page 2: Bible Reading (No changes) -->
+        <!-- Page 2: Bible Reading -->
         <div class="page" id="page2">
              <section class="lesson-section">
                 <div class="edit-controls">
@@ -524,7 +633,7 @@
             <div class="page-indicator">Page 2 of 6</div>
         </div>
 
-        <!-- Page 3: Pronunciation and Grammar (No changes) -->
+        <!-- Page 3: Pronunciation and Grammar -->
         <div class="page" id="page3">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -582,7 +691,7 @@
             <div class="page-indicator">Page 3 of 6</div>
         </div>
         
-        <!-- Page 4: Interactive Practice (MODIFIED) -->
+        <!-- Page 4: Interactive Practice -->
         <div class="page" id="page4">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -643,7 +752,7 @@
                                     </select> the basket. <span class="feedback-text"></span>
                                 </li>
                             </ol>
-                            <button class="btn" onclick="checkPrepositions()">Check Answers</button>
+                            <button class="btn" onclick="checkPrepositions()"><i class="fas fa-check"></i> Check Answers</button>
                         </div>
                     </div>
                 </div>
@@ -656,7 +765,7 @@
             <div class="page-indicator">Page 4 of 6</div>
         </div>
         
-        <!-- Page 5: Drag and Drop Activity (No changes from previous optimization) -->
+        <!-- Page 5: Drag and Drop Activity -->
         <div class="page" id="page5">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -696,8 +805,8 @@
                     <div class="dropzone" id="dropzone-6" data-correct="in">
                         <p>6. The bread is <span class="drop-target"></span> the basket.</p>
                     </div>
-                    <button class="btn" onclick="checkDragDrop()">Check All Answers</button>
-                    <button class="btn btn-secondary" onclick="resetDragDrop()">Reset</button>
+                    <button class="btn" onclick="checkDragDrop()"><i class="fas fa-check-double"></i> Check All</button>
+                    <button class="btn btn-secondary" onclick="resetDragDrop()"><i class="fas fa-undo"></i> Reset</button>
                 </div>
             </section>
             <div class="page-navigation">
@@ -707,7 +816,7 @@
             <div class="page-indicator">Page 5 of 6</div>
         </div>
         
-        <!-- Page 6: Vocabulary and Conclusion (No changes) -->
+        <!-- Page 6: Vocabulary and Conclusion -->
         <div class="page" id="page6">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -750,8 +859,8 @@
                                     <input type="text" class="vocab-input" style="width: 100%; margin-bottom: 10px; padding: 8px;"><span class="feedback-text"></span><br>
                                 </div>
                             </div>
-                            <button class="btn" onclick="showVocabAnswers()">Show Answers</button>
-                             <button class="btn btn-secondary" onclick="resetVocab()">Reset</button>
+                            <button class="btn" onclick="showVocabAnswers()"><i class="fas fa-eye"></i> Show Answers</button>
+                             <button class="btn btn-secondary" onclick="resetVocab()"><i class="fas fa-undo"></i> Reset</button>
                         </div>
                     </div>
                 </div>
@@ -783,12 +892,12 @@
                     </div>
                 </div>
             </section>
-            <div class="text-center">
+            <div class="text-center" style="margin-bottom: 20px;"> 
                 <button class="btn save-all-btn" onclick="saveAllChanges()"><i class="fas fa-save"></i> Save All Changes</button>
             </div>
             <div class="page-navigation">
                 <button class="btn btn-secondary" onclick="navigateTo(5)"><i class="fas fa-arrow-left"></i> Previous</button>
-                <button class="btn" disabled>Next <i class="fas fa-arrow-right"></i></button>
+                <!-- Next button removed as requested for the last page -->
             </div>
             <div class="page-indicator">Page 6 of 6</div>
         </div>
@@ -1081,10 +1190,10 @@
                     const userAnswer = placedDraggableDiv.dataset.word;
                     if (userAnswer !== correctAnswer) {
                         allAreCorrect = false;
-                         placedDraggableDiv.style.borderColor = 'var(--danger)'; // Highlight incorrect ones
+                         placedDraggableDiv.style.borderColor = 'var(--danger)'; 
                          placedDraggableDiv.style.backgroundColor = 'rgba(220, 53, 69, 0.15)';
                     } else {
-                         placedDraggableDiv.style.borderColor = 'var(--success)'; // Highlight correct ones
+                         placedDraggableDiv.style.borderColor = 'var(--success)'; 
                          placedDraggableDiv.style.backgroundColor = 'rgba(40, 167, 69, 0.15)';
                     }
                 } else {
@@ -1135,18 +1244,18 @@
 
             if (!feedbackSpan) {
                 console.warn("Feedback span not found for select:", selectElement);
-                return null; // Indicate an issue or unanswered if span is critical
+                return null; 
             }
 
-            feedbackSpan.textContent = ''; // Clear previous feedback
-            selectElement.style.backgroundColor = ''; // Reset background
-            selectElement.style.borderColor = '#ddd'; // Reset border to neutral
+            feedbackSpan.textContent = ''; 
+            selectElement.style.backgroundColor = ''; 
+            selectElement.style.borderColor = '#ddd'; 
 
             if (selectElement.value === "") {
                 feedbackSpan.textContent = ' Please choose.';
                 feedbackSpan.style.color = 'var(--warning)';
                 selectElement.style.borderColor = 'var(--warning)';
-                return null; // Unanswered
+                return null; 
             }
 
             if (selectElement.value === correctAnswer) {
@@ -1154,13 +1263,13 @@
                 selectElement.style.borderColor = 'var(--success)';
                 feedbackSpan.textContent = ' Correct!';
                 feedbackSpan.style.color = 'var(--success)';
-                return true; // Correct
+                return true; 
             } else {
                 selectElement.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
                 selectElement.style.borderColor = 'var(--danger)';
                 feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswer})`;
                 feedbackSpan.style.color = 'var(--danger)';
-                return false; // Incorrect
+                return false; 
             }
         }
 
@@ -1171,11 +1280,11 @@
             let hasUnanswered = false;
 
             selects.forEach(select => {
-                const result = checkIndividualPreposition(select); // This also updates UI for each
-                if (result === null) { // Unanswered
+                const result = checkIndividualPreposition(select); 
+                if (result === null) { 
                     hasUnanswered = true;
                     allAnsweredAndCorrect = false;
-                } else if (result === false) { // Incorrect
+                } else if (result === false) { 
                     hasIncorrect = true;
                     allAnsweredAndCorrect = false;
                 }
@@ -1344,7 +1453,7 @@
             const prepositionSelects = document.querySelectorAll('#page4 .preposition-select');
             prepositionSelects.forEach(select => {
                 select.addEventListener('change', function() {
-                    checkIndividualPreposition(this); // 'this' refers to the select element
+                    checkIndividualPreposition(this); 
                 });
             });
         });
