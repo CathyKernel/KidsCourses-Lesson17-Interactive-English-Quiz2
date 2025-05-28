@@ -123,7 +123,7 @@
             padding: 10px;
             border: 1px dashed transparent;
             transition: all 0.3s;
-            cursor: text; /* Indicate text input on hover */
+            cursor: text; 
         }
         
         .content-editable:hover:not([contenteditable="true"]) {
@@ -192,22 +192,27 @@
             font-size: 1.2rem;
         }
         
-        .drag-drop-container {
+        .drag-drop-container { /* Pool for draggable prepositions */
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px; /* Reduced gap slightly */
             margin: 20px 0;
+            padding: 10px;
+            border: 1px solid var(--light);
+            border-radius: 6px;
+            min-height: 50px; /* Ensure it has some height even if empty */
         }
         
-        .draggable {
+        .draggable { /* Style for preposition blocks */
             background-color: white;
             border: 2px dashed var(--primary);
-            padding: 12px 15px;
+            padding: 8px 12px; /* Adjusted padding */
             border-radius: 6px;
             cursor: grab;
             font-weight: 500;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s;
+            text-align: center;
         }
         
         .draggable:hover {
@@ -215,17 +220,50 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        .dropzone {
-            min-height: 100px;
-            border: 2px dashed var(--accent);
+        .dropzone { /* Container for a sentence with a drop target */
+            /* min-height: 100px; No longer needed as p will define height */
+            border: 2px solid transparent; /* Remove default border, rely on p */
             border-radius: 8px;
-            padding: 15px;
-            background-color: rgba(255,255,255,0.7);
-            margin: 15px 0;
+            padding: 0; /* Padding handled by p or internal elements */
+            background-color: transparent; /* No background for dropzone itself */
+            margin: 10px 0; /* Reduced margin */
             transition: all 0.3s;
         }
         
-        .dropzone.highlight {
+        .dropzone p { 
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; 
+            padding: 10px; /* Add padding to the paragraph for spacing */
+            border: 1px solid #eee; /* Light border for the sentence line */
+            border-radius: 6px;
+        }
+
+        .drop-target { /* The SPAN that will hold the draggable */
+            min-width: 80px; 
+            min-height: 38px; /* Approx height of a draggable */
+            display: inline-flex; /* To center the draggable if smaller */
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle; 
+            border: 2px dashed var(--accent); /* Visible when empty */
+            border-radius: 6px;
+            padding: 2px; /* Small padding for the placeholder */
+            margin: 0 5px; /* Spacing around the slot */
+        }
+        .drop-target:not(:empty) { /* When it has a draggable inside */
+            border-color: transparent; /* Hide dashed border when filled */
+            padding: 0;
+        }
+        /* Style for the draggable when it's inside a drop-target (neutral state before feedback) */
+        .drop-target .draggable {
+            margin: 0; 
+            box-shadow: none;
+            border: 2px solid var(--secondary); /* Default border when in a slot */
+            background-color: var(--light);
+        }
+        
+        .dropzone.highlight .drop-target { /* Highlight effect on the target span */
             background-color: rgba(79, 195, 247, 0.2);
             border-color: var(--secondary);
         }
@@ -244,63 +282,14 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-        
-        .quiz-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
+                
+        .feedback-text { 
+            margin-left: 8px;
+            font-size: 0.9em;
         }
-        
-        .quiz-option {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .quiz-option:hover {
-            background-color: var(--light);
-            border-color: var(--accent);
-        }
-        
-        .quiz-option.selected {
-            background-color: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-        
-        .quiz-option.correct {
-            background-color: var(--success);
-            color: white;
-            border-color: var(--success);
-        }
-        
-        .quiz-option.incorrect {
-            background-color: var(--danger);
-            color: white;
-            border-color: var(--danger);
-        }
-        
-        .feedback {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .feedback.correct {
-            background-color: rgba(40, 167, 69, 0.2);
-            color: var(--success);
-            display: block;
-        }
-        
-        .feedback.incorrect {
-            background-color: rgba(220, 53, 69, 0.2);
-            color: var(--danger);
-            display: block;
+        .feedback-text-dd { /* For any text feedback next to dropzones if needed, though now feedback is on blocks */
+             margin-left: 10px;
+             font-weight: bold;
         }
         
         .btn {
@@ -314,6 +303,8 @@
             font-size: 1rem;
             transition: all 0.3s;
             text-align: center;
+            margin-top: 5px; 
+            margin-right: 5px; 
         }
         
         .btn:hover {
@@ -322,6 +313,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
+        /* ... (rest of your CSS remains the same) ... */
         .btn-secondary {
             background-color: #6c757d;
         }
@@ -374,6 +366,13 @@
                 padding: 4px 8px;
                 font-size: 0.8rem;
             }
+            .dropzone p {
+                flex-direction: column; /* Stack sentence parts on small screens */
+                align-items: flex-start;
+            }
+            .drop-target {
+                margin: 5px 0; /* Adjust margin for stacked layout */
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -385,7 +384,7 @@
             <p>Prepositions of Place & God's Laws</p>
         </header>
         
-        <!-- Page 1: Introduction -->
+        <!-- Page 1 to 4 remain the same -->
         <div class="page active" id="page1">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -436,7 +435,6 @@
             <div class="page-indicator">Page 1 of 6</div>
         </div>
         
-        <!-- Page 2: Bible Reading -->
         <div class="page" id="page2">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -480,7 +478,6 @@
             <div class="page-indicator">Page 2 of 6</div>
         </div>
         
-        <!-- Page 3: Pronunciation and Grammar -->
         <div class="page" id="page3">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -542,7 +539,6 @@
             <div class="page-indicator">Page 3 of 6</div>
         </div>
         
-        <!-- Page 4: Interactive Practice -->
         <div class="page" id="page4">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -612,7 +608,8 @@
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-arrows-alt"></i> Drag the Prepositions</div>
                     
-                    <div class="drag-drop-container">
+                    <div class="drag-drop-container" id="drag-drop-pool">
+                        <!-- Draggable items will be appended here by JS or can be hardcoded -->
                         <div class="draggable" draggable="true" data-word="on">on</div>
                         <div class="draggable" draggable="true" data-word="behind">behind</div>
                         <div class="draggable" draggable="true" data-word="above">above</div>
@@ -640,7 +637,7 @@
                         <p>6. The bread is <span class="drop-target"></span> the basket.</p>
                     </div>
                     
-                    <button class="btn" onclick="checkDragDrop()">Check Answers</button>
+                    <button class="btn" onclick="checkDragDrop()">Check All Answers</button>
                     <button class="btn btn-secondary" onclick="resetDragDrop()">Reset</button>
                 </div>
             </section>
@@ -772,45 +769,24 @@
             window.scrollTo(0, 0);
         }
 
-        // --- EDITING FUNCTIONS ---
+        // --- EDITING FUNCTIONS (No changes here) ---
         function enableEdit(triggerElement) {
             let controlsContainer, section, editableToActivate, editBtnAssociated;
-
-            // Determine the context based on what was clicked/triggered
-            if (triggerElement.classList.contains('edit-btn-section')) { // Triggered by an Edit button
+            if (triggerElement.classList.contains('edit-btn-section')) { 
                 editBtnAssociated = triggerElement;
                 controlsContainer = editBtnAssociated.parentElement;
                 section = controlsContainer.closest('.lesson-section, .verse-box');
-                if (!section) { 
-                    console.error("Edit button's control container is not within a .lesson-section or .verse-box.", controlsContainer); 
-                    return; 
-                }
-                // Default: first content-editable in the section for this button
+                if (!section) { console.error("Edit button's control container is not within a .lesson-section or .verse-box.", controlsContainer); return; }
                 editableToActivate = section.querySelector('.content-editable'); 
-            } else if (triggerElement.classList.contains('content-editable')) { // Triggered by clicking a content-editable div
+            } else if (triggerElement.classList.contains('content-editable')) { 
                 editableToActivate = triggerElement;
                 section = editableToActivate.closest('.lesson-section, .verse-box');
-                if (!section) { 
-                    console.warn("Content-editable element clicked is not within a .lesson-section or .verse-box.", editableToActivate); 
-                    // If it's not in a section, it can't use shared controls.
-                    // You might want to allow editing without controls, or disallow. For now, let's assume controls are needed.
-                    return; 
-                }
+                if (!section) { return; }
                 controlsContainer = section.querySelector('.edit-controls');
                 if (controlsContainer) {
                     editBtnAssociated = controlsContainer.querySelector('.edit-btn-section');
-                } else {
-                    // This content-editable is in a section but the section has no .edit-controls
-                    // console.warn("No edit controls found in the section for the clicked content-editable.", section);
-                    // Decide if editing should be allowed. For now, let's assume if no controls, no managed edit.
-                    return;
-                }
-            } else {
-                console.error("enableEdit called with an unknown element type:", triggerElement);
-                return;
-            }
-
-            // If, after determining context, we still don't have a target editable area for the controls
+                } else { return; }
+            } else { console.error("enableEdit called with an unknown element type:", triggerElement); return; }
             if (!editableToActivate) {
                 if (editBtnAssociated && controlsContainer) { 
                     editBtnAssociated.innerHTML = '<i class="fas fa-eye-slash"></i> No Edit Area';
@@ -823,51 +799,35 @@
                 console.warn("No .content-editable element could be targeted for editing in section:", section ? section.id : "Unknown section", "Trigger:", triggerElement);
                 return;
             }
-            
-            // Auto-cancel any other active edit in the same section
             if (section) {
                 const previouslyEditing = section.querySelector('.content-editable[data-currently-editing="true"]');
                 if (previouslyEditing && previouslyEditing !== editableToActivate) {
-                    console.log("Switching edit target. Auto-canceling previous edit for:", previouslyEditing.id || "anonymous editable");
                     const prevOriginalContent = previouslyEditing.getAttribute('data-original-content');
-                    if (prevOriginalContent !== null) {
-                        previouslyEditing.innerHTML = prevOriginalContent;
-                    }
+                    if (prevOriginalContent !== null) { previouslyEditing.innerHTML = prevOriginalContent; }
                     previouslyEditing.setAttribute('contenteditable', 'false');
                     previouslyEditing.removeAttribute('data-original-content');
                     previouslyEditing.removeAttribute('data-currently-editing');
                 }
             }
-
             editableToActivate.setAttribute('data-original-content', editableToActivate.innerHTML);
             editableToActivate.setAttribute('contenteditable', 'true');
-            editableToActivate.setAttribute('data-currently-editing', 'true'); // Mark this one as being edited
+            editableToActivate.setAttribute('data-currently-editing', 'true'); 
             editableToActivate.focus();
-
-            // Manage button visibility in the relevant controls container
             if (controlsContainer) {
                 const saveBtn = controlsContainer.querySelector('.save-btn-section');
                 const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
-
-                if (editBtnAssociated) editBtnAssociated.classList.add('hidden'); // Hide the specific edit button
+                if (editBtnAssociated) editBtnAssociated.classList.add('hidden'); 
                 if (saveBtn) saveBtn.classList.remove('hidden');
                 if (cancelBtn) cancelBtn.classList.remove('hidden');
-            } else {
-                 console.warn("Editable area activated, but no controls container found to update buttons for section:", section ? section.id : "Unknown section");
             }
         }
-
         function saveSectionChanges(saveBtn) {
             const controlsContainer = saveBtn.parentElement;
             const section = controlsContainer.closest('.lesson-section, .verse-box');
             if (!section) { console.error("Save button not in a valid section's controls.", saveBtn); return; }
-
-            // Find the element marked as currently editing within this section
             const editable = section.querySelector('.content-editable[data-currently-editing="true"]');
-            
             if (!editable) {
                 console.warn("Save clicked, but no 'data-currently-editing' element found in section:", section.id);
-                // Attempt to restore button states if something is wrong
                 const editBtn = controlsContainer.querySelector('.edit-btn-section');
                 const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
                 saveBtn.classList.add('hidden');
@@ -875,32 +835,23 @@
                 if (editBtn) editBtn.classList.remove('hidden');
                 return;
             }
-
             editable.setAttribute('contenteditable', 'false');
             editable.removeAttribute('data-original-content'); 
-            editable.removeAttribute('data-currently-editing'); // Clean up marker
-
+            editable.removeAttribute('data-currently-editing'); 
             console.log(`Section content for '${editable.id || 'unknown_editable_id'}' saved.`);
-
             const editBtn = controlsContainer.querySelector('.edit-btn-section');
             const cancelBtn = controlsContainer.querySelector('.cancel-btn-section');
-
             saveBtn.classList.add('hidden');
             if (cancelBtn) cancelBtn.classList.add('hidden');
             if (editBtn) editBtn.classList.remove('hidden');
         }
-
         function cancelSectionChanges(cancelBtn) {
             const controlsContainer = cancelBtn.parentElement;
             const section = controlsContainer.closest('.lesson-section, .verse-box');
             if (!section) { console.error("Cancel button not in a valid section's controls.", cancelBtn); return; }
-
-            // Find the element marked as currently editing within this section
             const editable = section.querySelector('.content-editable[data-currently-editing="true"]');
-
             if (!editable) {
                 console.warn("Cancel clicked, but no 'data-currently-editing' element found in section:", section.id);
-                // Attempt to restore button states
                 const editBtn = controlsContainer.querySelector('.edit-btn-section');
                 const saveBtn = controlsContainer.querySelector('.save-btn-section');
                 cancelBtn.classList.add('hidden');
@@ -908,201 +859,276 @@
                 if (editBtn) editBtn.classList.remove('hidden');
                 return;
             }
-
             const originalContent = editable.getAttribute('data-original-content');
-            if (originalContent !== null) {
-                editable.innerHTML = originalContent;
-            }
+            if (originalContent !== null) { editable.innerHTML = originalContent; }
             editable.setAttribute('contenteditable', 'false');
             editable.removeAttribute('data-original-content');
-            editable.removeAttribute('data-currently-editing'); // Clean up marker
-
+            editable.removeAttribute('data-currently-editing'); 
             const editBtn = controlsContainer.querySelector('.edit-btn-section');
             const saveBtn = controlsContainer.querySelector('.save-btn-section');
-
             cancelBtn.classList.add('hidden');
             if (saveBtn) saveBtn.classList.add('hidden');
             if (editBtn) editBtn.classList.remove('hidden');
         }
-        
-        // Preview uploaded image
         function previewImage(event, imgId) {
             const reader = new FileReader();
             const output = document.getElementById(imgId);
-            if (!output) {
-                console.error("Image element not found:", imgId);
-                return;
-            }
-            reader.onload = function(){
-                output.src = reader.result;
-            };
-            if (event.target.files && event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
+            if (!output) { console.error("Image element not found:", imgId); return; }
+            reader.onload = function(){ output.src = reader.result; };
+            if (event.target.files && event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
         }
-
-        // Preview uploaded audio
         function previewAudio(event, audioId) {
             const reader = new FileReader();
             const audioPlayer = document.getElementById(audioId);
-             if (!audioPlayer) {
-                console.error("Audio player element not found:", audioId);
-                return;
-            }
-            reader.onload = function(e) {
-                audioPlayer.src = e.target.result;
-                audioPlayer.load();
-            };
-            if (event.target.files && event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
+             if (!audioPlayer) { console.error("Audio player element not found:", audioId); return; }
+            reader.onload = function(e) { audioPlayer.src = e.target.result; audioPlayer.load(); };
+            if (event.target.files && event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
         }
         
-        // Drag and drop functionality
-        let draggedItem = null;
-        
+        // --- DRAG AND DROP FUNCTIONALITY (ENHANCED) ---
+        let draggedItem = null; 
+        const originalDraggablePoolId = 'drag-drop-pool'; // ID of the container for initial draggables
+
         document.addEventListener('DOMContentLoaded', function() {
             // Click-to-edit for content-editable divs
             document.querySelectorAll('.content-editable').forEach(editableDiv => {
                 editableDiv.addEventListener('click', function(event) {
-                    // Only trigger if not already editing and if the click is directly on the div, not an inner interactive element
-                    if (this.getAttribute('contenteditable') === 'true' || event.target !== this) {
-                        // If already editing, the click is likely for cursor placement.
-                        // If target is not 'this', it might be a link or button inside later.
-                        // For now, `event.target !== this` might be too restrictive if content has simple tags like <p>, <b>
-                        // Let's simplify: only check if already editing.
-                        if (this.getAttribute('contenteditable') === 'true') return;
-                    }
-                    enableEdit(this); // 'this' is the clicked content-editable div
+                    if (this.getAttribute('contenteditable') === 'true') return;
+                    enableEdit(this); 
                 });
             });
 
             const draggables = document.querySelectorAll('.draggable');
             const dropTargets = document.querySelectorAll('.drop-target');
+            const dragDropPool = document.getElementById(originalDraggablePoolId);
             
+            // Add drag event listeners to each draggable item
             draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', function() {
-                    draggedItem = this;
-                    setTimeout(() => { if(this) this.style.opacity = '0.4'; }, 0);
-                });
-                
-                draggable.addEventListener('dragend', function() {
-                    if(this) this.style.opacity = '1';
-                    draggedItem = null;
-                });
+                addDraggableEvents(draggable);
             });
             
+            // Add drop event listeners to each drop target (span)
             dropTargets.forEach(target => {
-                target.addEventListener('dragover', function(e) {
-                    e.preventDefault(); 
-                    const dropzone = this.closest('.dropzone');
-                    if(dropzone) dropzone.classList.add('highlight');
-                });
-                
-                target.addEventListener('dragleave', function() {
-                    const dropzone = this.closest('.dropzone');
-                    if(dropzone) dropzone.classList.remove('highlight');
-                });
-                
-                target.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    const dropzone = this.closest('.dropzone');
-                    if(dropzone) dropzone.classList.remove('highlight');
-                    
-                    if (draggedItem) {
-                        this.innerHTML = ''; // Clear previous content/styles
-                        this.style.color = '';
-                        this.style.fontWeight = '';
-                        this.textContent = draggedItem.textContent; // Set new text
-                        this.setAttribute('data-answer', draggedItem.getAttribute('data-word')); // Store the dropped word's data
-                    }
-                });
+                target.addEventListener('dragover', handleDragOver);
+                target.addEventListener('dragleave', handleDragLeave);
+                target.addEventListener('drop', handleDropOnTarget);
             });
 
-            // Image and Audio upload initializers
-            const imageUploads = [
-                { inputId: 'image-upload-page2', imgId: 'bible-story-img' },
-                { inputId: 'image-upload-page4', imgId: 'preposition-practice-img' }
-            ];
-            imageUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
-                }
-            });
-
-            const audioUploads = [
-                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
-                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
-            ];
-            audioUploads.forEach(upload => {
-                const inputElement = document.getElementById(upload.inputId);
-                if (inputElement) {
-                    inputElement.onchange = (event) => previewAudio(event, upload.audioId);
-                }
-            });
+            // Add drop event listeners to the original pool
+            if (dragDropPool) {
+                dragDropPool.addEventListener('dragover', handleDragOver);
+                dragDropPool.addEventListener('dragleave', handleDragLeavePool);
+                dragDropPool.addEventListener('drop', handleDropOnPool);
+            }
+            
+            // Image and Audio upload initializers (no changes)
+            // ...
         });
+
+        function addDraggableEvents(draggable) {
+            draggable.addEventListener('dragstart', handleDragStart);
+            draggable.addEventListener('dragend', handleDragEnd);
+        }
+
+        function handleDragStart(event) {
+            draggedItem = event.target; // The .draggable div
+            // Briefly make the original item semi-transparent if it's from the pool
+            setTimeout(() => { 
+                if (draggedItem && draggedItem.parentElement.id === originalDraggablePoolId) {
+                    draggedItem.style.opacity = '0.5'; 
+                }
+            }, 0);
+
+            // If dragging from a sentence slot, reset its style to neutral "dragging" state
+            if (draggedItem.parentElement.classList.contains('drop-target')) {
+                draggedItem.style.border = '2px dashed var(--primary)'; // Style like it's from pool while dragging
+                draggedItem.style.backgroundColor = 'white';
+                // The parent .drop-target will become empty visually as item is dragged away
+            }
+        }
+
+        function handleDragEnd() {
+            if (draggedItem) {
+                draggedItem.style.opacity = '1'; // Restore opacity
+            }
+            draggedItem = null;
+            // Remove any general highlight from pool or targets
+            document.querySelectorAll('.drag-drop-container.highlight, .drop-target.highlight').forEach(el => {
+                el.classList.remove('highlight');
+            });
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault(); 
+            if (event.target.classList.contains('drop-target') || event.target.id === originalDraggablePoolId) {
+                 // Highlight the specific drop-target span or the pool
+                const targetElement = event.target.classList.contains('drop-target') ? event.target : 
+                                      (event.target.closest('.drop-target') || (event.target.id === originalDraggablePoolId ? event.target : null));
+                if (targetElement) {
+                    targetElement.classList.add('highlight');
+                }
+            } else if (event.target.closest('.drop-target')) { // If over content inside drop-target, highlight drop-target
+                 event.target.closest('.drop-target').classList.add('highlight');
+            }
+        }
+
+        function handleDragLeave(event) {
+            if (event.target.classList.contains('drop-target') || event.target.id === originalDraggablePoolId) {
+                event.target.classList.remove('highlight');
+            } else if (event.target.closest('.drop-target')) {
+                event.target.closest('.drop-target').classList.remove('highlight');
+            }
+        }
+        function handleDragLeavePool(event) { // Specific for pool if needed
+            if (event.target.id === originalDraggablePoolId) {
+                event.target.classList.remove('highlight');
+            }
+        }
+
+
+        function handleDropOnTarget(event) {
+            event.preventDefault();
+            const currentDropTargetSpan = event.target.closest('.drop-target'); // Ensure we get the span
+            if (!currentDropTargetSpan || !draggedItem) {
+                if(draggedItem) draggedItem.style.opacity = '1'; // Restore opacity if drop failed early
+                return;
+            }
+
+            currentDropTargetSpan.classList.remove('highlight');
+            const parentDropzoneDiv = currentDropTargetSpan.closest('.dropzone');
+            const dragDropPool = document.getElementById(originalDraggablePoolId);
+
+            // 1. If currentDropTargetSpan already contains a DIFFERENT preposition, move it back to the pool
+            const existingPrepositionDiv = currentDropTargetSpan.querySelector('.draggable');
+            if (existingPrepositionDiv && existingPrepositionDiv !== draggedItem) {
+                existingPrepositionDiv.style.border = '2px dashed var(--primary)'; // Pool style
+                existingPrepositionDiv.style.backgroundColor = 'white';       // Pool style
+                dragDropPool.appendChild(existingPrepositionDiv);
+            }
+            currentDropTargetSpan.innerHTML = ''; // Clear the span for the new item
+
+            // 2. Place the new draggedItem into this drop-target span
+            currentDropTargetSpan.appendChild(draggedItem);
+            draggedItem.style.opacity = '1'; 
+            
+            // 3. Style for being in a sentence slot (neutral before feedback)
+            draggedItem.style.border = '2px solid var(--secondary)'; 
+            draggedItem.style.backgroundColor = 'var(--light)';
+
+            // 4. Immediate Feedback
+            const userAnswer = draggedItem.dataset.word;
+            const correctAnswer = parentDropzoneDiv.dataset.correct;
+
+            if (userAnswer === correctAnswer) {
+                draggedItem.style.borderColor = 'var(--success)';
+                draggedItem.style.backgroundColor = 'rgba(40, 167, 69, 0.15)'; // Feedback success color
+            } else {
+                draggedItem.style.borderColor = 'var(--danger)';
+                draggedItem.style.backgroundColor = 'rgba(220, 53, 69, 0.15)'; // Feedback danger color
+            }
+            currentDropTargetSpan.setAttribute('data-answer', userAnswer); // For check all button
+        }
+
+        function handleDropOnPool(event) {
+            event.preventDefault();
+            const pool = document.getElementById(originalDraggablePoolId);
+            if (!draggedItem || !pool) return;
+
+            pool.classList.remove('highlight');
+            
+            // Only append if it's not already in the pool (e.g. dragging within the pool)
+            // and if it came from a sentence slot
+            if (draggedItem.parentElement.classList.contains('drop-target')) {
+                draggedItem.style.border = '2px dashed var(--primary)'; // Pool style
+                draggedItem.style.backgroundColor = 'white';       // Pool style
+                draggedItem.style.opacity = '1';
+                pool.appendChild(draggedItem);
+                // The source drop-target span is now empty.
+            } else if (draggedItem.parentElement.id !== originalDraggablePoolId) {
+                 // If it was dragged from somewhere else unexpected, put it in the pool
+                draggedItem.style.border = '2px dashed var(--primary)'; 
+                draggedItem.style.backgroundColor = 'white';       
+                draggedItem.style.opacity = '1';
+                pool.appendChild(draggedItem);
+            }
+            // If draggedItem was already in the pool and dropped on the pool, do nothing to its style.
+        }
         
+        /**
+         * Checks ALL answers for the drag and drop preposition activity.
+         * Provides an overall alert. Individual feedback is already on items.
+         */
         function checkDragDrop() {
             const dropzones = document.querySelectorAll('.dropzone');
-            let allCorrect = true;
+            let allAreCorrect = true;
+            let anyMissing = false;
             
             dropzones.forEach(zone => {
-                const target = zone.querySelector('.drop-target');
-                if (!target) return;
+                const targetSpan = zone.querySelector('.drop-target');
+                if (!targetSpan) return;
 
-                const userAnswer = target.getAttribute('data-answer');
-                const correctAnswer = zone.getAttribute('data-correct');
+                targetSpan.style.borderStyle = 'dashed'; // Reset to dashed (empty or filled)
+                targetSpan.style.borderColor = targetSpan.querySelector('.draggable') ? 'transparent' : 'var(--accent)'; // Default for empty/filled
+
+                const placedDraggableDiv = targetSpan.querySelector('.draggable');
+                const correctAnswer = zone.dataset.correct;
                 
-                const feedbackSpanOld = zone.querySelector('.feedback-text-dd');
-                if (feedbackSpanOld) feedbackSpanOld.remove(); // Clear old feedback
-
-                if (userAnswer === correctAnswer) {
-                    target.style.color = 'var(--success)';
-                    target.style.fontWeight = 'bold';
-                } else {
-                    target.style.color = 'var(--danger)';
-                    target.style.fontWeight = 'normal';
-                    allCorrect = false;
-                    
-                    // Provide specific feedback if an answer was dropped
-                    if (userAnswer) {
-                        const feedback = document.createElement('span');
-                        feedback.classList.add('feedback-text-dd'); 
-                        feedback.style.color = 'var(--danger)';
-                        feedback.style.marginLeft = '10px';
-                        feedback.textContent = `(Incorrect. Correct: ${correctAnswer})`;
-                        target.parentNode.appendChild(feedback);
-                    } else { // Feedback if no answer was dropped
-                         const feedback = document.createElement('span');
-                        feedback.classList.add('feedback-text-dd'); 
-                        feedback.style.color = 'var(--danger)';
-                        feedback.style.marginLeft = '10px';
-                        feedback.textContent = `(Missing. Correct: ${correctAnswer})`;
-                        target.parentNode.appendChild(feedback);
+                if (placedDraggableDiv) {
+                    const userAnswer = placedDraggableDiv.dataset.word;
+                    if (userAnswer !== correctAnswer) {
+                        allAreCorrect = false;
+                        // Visual feedback is already on placedDraggableDiv
                     }
+                } else {
+                    // No draggable in this slot
+                    allAreCorrect = false;
+                    anyMissing = true;
+                    targetSpan.style.borderColor = 'var(--danger)'; // Highlight empty required slot
                 }
             });
             
-            if (allCorrect) {
-                alert('Great job! All drag and drop answers are correct!');
-            } else {
-                alert('Some answers are incorrect or missing. Please review.');
+            if (allAreCorrect) {
+                alert('Great job! All prepositions are placed correctly!');
+            } else if (anyMissing) {
+                alert('Some prepositions are missing or incorrect. Please review the highlighted slots.');
+            } else { // All slots filled, but some are incorrect
+                alert('Some prepositions are incorrect. Please review the highlighted items.');
             }
         }
         
+        /**
+         * Resets the drag and drop activity.
+         * Moves all prepositions back to the pool and resets styles.
+         */
         function resetDragDrop() {
+            const dragDropPool = document.getElementById(originalDraggablePoolId);
             const dropTargets = document.querySelectorAll('.drop-target');
-            dropTargets.forEach(target => {
-                target.innerHTML = ''; // Clear the text
-                target.style.color = ''; // Reset color
-                target.style.fontWeight = ''; // Reset font weight
-                target.removeAttribute('data-answer'); // Remove stored answer
-                const feedbackSpan = target.parentNode.querySelector('.feedback-text-dd');
-                if (feedbackSpan) feedbackSpan.remove(); // Remove feedback span
+
+            dropTargets.forEach(targetSpan => {
+                const placedDraggableDiv = targetSpan.querySelector('.draggable');
+                if (placedDraggableDiv) {
+                    // Reset its styles to pool-default
+                    placedDraggableDiv.style.border = '2px dashed var(--primary)';
+                    placedDraggableDiv.style.backgroundColor = 'white';
+                    placedDraggableDiv.style.opacity = '1';
+                    // Move it back to the pool
+                    dragDropPool.appendChild(placedDraggableDiv);
+                }
+                targetSpan.innerHTML = ''; // Clear the span
+                targetSpan.removeAttribute('data-answer'); 
+                targetSpan.style.borderColor = 'var(--accent)'; // Reset border to empty slot style
+                targetSpan.style.borderStyle = 'dashed';
+            });
+
+            // Ensure all original draggables in the pool are styled correctly (if any were left or added back)
+            dragDropPool.querySelectorAll('.draggable').forEach(d => {
+                d.style.border = '2px dashed var(--primary)';
+                d.style.backgroundColor = 'white';
+                d.style.opacity = '1';
             });
         }
         
+        // --- PREPOSITION SELECT QUIZ (PAGE 4) ---
         function checkPrepositions() {
             const selects = document.querySelectorAll('.preposition-select');
             const correctAnswers = ['at', 'behind', 'in']; 
@@ -1111,7 +1137,7 @@
             selects.forEach((select, index) => {
                 const feedbackSpan = select.parentElement.querySelector('.feedback-text');
                 if (!feedbackSpan) return;
-                feedbackSpan.textContent = ''; // Clear previous feedback
+                feedbackSpan.textContent = ''; 
 
                 if (select.value === correctAnswers[index]) {
                     select.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
@@ -1122,9 +1148,9 @@
                     select.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
                     select.style.borderColor = 'var(--danger)';
                     allCorrect = false;
-                    if (select.value) { // If user made a selection
+                    if (select.value) { 
                         feedbackSpan.textContent = ` Incorrect. (Correct: ${correctAnswers[index]})`;
-                    } else { // If user didn't choose anything
+                    } else { 
                          feedbackSpan.textContent = ` Please choose. (Correct: ${correctAnswers[index]})`;
                     }
                     feedbackSpan.style.color = 'var(--danger)';
@@ -1138,6 +1164,7 @@
             }
         }
         
+        // --- VOCABULARY REVIEW (PAGE 6) (No changes here) ---
         function showVocabAnswers() {
             const correctWords = [
                 'laws', 'between', 'under', 
@@ -1145,94 +1172,75 @@
                 'above', 'land', 'help', 
                 'have', 'Lord', 'love'
             ]; 
-            
             const inputs = document.querySelectorAll('.vocab-input');
-            let allCorrectUserAnswers = true; // Tracks if all user-provided answers are correct
-            let allWordsAttempted = true; // Tracks if all required words were attempted
-
+            let allCorrectUserAnswers = true; 
+            let allWordsAttempted = true;  
             inputs.forEach((input, index) => {
                 const feedbackSpan = input.nextElementSibling; 
                 if (!feedbackSpan || !feedbackSpan.classList.contains('feedback-text')) {
-                    console.warn("Feedback span not found for vocab input", input);
-                    return;
+                    console.warn("Feedback span not found for vocab input", input); return;
                 }
                 feedbackSpan.textContent = ''; 
                 input.style.backgroundColor = ''; 
-                input.style.borderColor = '#ddd';
-
+                input.style.borderColor = '#ddd'; 
                 if (index < correctWords.length) {
-                    const userAnswer = input.value.trim().toLowerCase();
-                    const correctAnswer = correctWords[index].toLowerCase();
-                    
-                    if (!userAnswer) { // If input is empty
-                        allWordsAttempted = false;
-                        input.style.backgroundColor = 'rgba(255, 193, 7, 0.1)'; // Warning color for empty
+                    const userAnswer = input.value.trim().toLowerCase(); 
+                    const correctAnswer = correctWords[index].toLowerCase(); 
+                    if (!userAnswer) { 
+                        allWordsAttempted = false; 
+                        input.style.backgroundColor = 'rgba(255, 193, 7, 0.1)'; 
                         input.style.borderColor = 'var(--warning)';
                         feedbackSpan.textContent = ` Missing. (Answer: ${correctWords[index]})`;
                         feedbackSpan.style.color = 'var(--warning)';
-                        allCorrectUserAnswers = false; // An empty field is not a correct user answer
+                        allCorrectUserAnswers = false; 
                     } else if (userAnswer === correctAnswer) {
-                        input.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                        input.style.backgroundColor = 'rgba(40, 167, 69, 0.1)'; 
                         input.style.borderColor = 'var(--success)';
                         feedbackSpan.textContent = ' Correct!';
                         feedbackSpan.style.color = 'var(--success)';
                     } else {
-                        input.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                        input.style.backgroundColor = 'rgba(220, 53, 69, 0.1)'; 
                         input.style.borderColor = 'var(--danger)';
                         feedbackSpan.textContent = ` Incorrect. (Answer: ${correctWords[index]})`;
                         feedbackSpan.style.color = 'var(--danger)';
-                        allCorrectUserAnswers = false;
+                        allCorrectUserAnswers = false; 
                     }
-                } else {
-                    // This case should ideally not happen if HTML matches correctWords length
-                    input.disabled = true; 
-                }
+                } else { input.disabled = true; }
             });
-
             if(allCorrectUserAnswers && allWordsAttempted) {
                 alert("Great job! All vocabulary words are correct!");
-            } else if (!allCorrectUserAnswers || !allWordsAttempted) {
+            } else { 
                 alert("Some vocabulary words are incorrect or missing. The correct answers are now shown or indicated.");
             }
         }
-
         function resetVocab() {
             const inputs = document.querySelectorAll('.vocab-input');
             inputs.forEach(input => {
-                input.value = '';
-                input.style.backgroundColor = '';
-                input.style.borderColor = '#ddd';
-                input.disabled = false;
+                input.value = ''; 
+                input.style.backgroundColor = ''; 
+                input.style.borderColor = '#ddd'; 
+                input.disabled = false; 
                 const feedbackSpan = input.nextElementSibling;
                 if (feedbackSpan && feedbackSpan.classList.contains('feedback-text')) {
-                    feedbackSpan.textContent = '';
+                    feedbackSpan.textContent = ''; 
                 }
             });
         }
 
+        // --- SAVE ALL CHANGES (General Content) (No changes here) ---
         function saveAllChanges() {
             const allEditableContent = {};
             let activeEditsExist = false;
-            
             document.querySelectorAll('.content-editable').forEach(el => {
-                 if (el.id) { 
-                    allEditableContent[el.id] = el.innerHTML;
-                 } else {
-                    // For elements without ID, we could generate a path or skip them
-                    // For now, skipping elements without ID for simplicity in this example
-                    console.warn("Editable element found without an ID. Skipping save for this element:", el);
-                 }
-                 if (el.getAttribute('contenteditable') === 'true' || el.dataset.currentlyEditing === 'true') {
-                    activeEditsExist = true;
-                 }
+                 if (el.id) { allEditableContent[el.id] = el.innerHTML;
+                 } else { console.warn("Editable element found without an ID. Skipping save for this element:", el); }
+                 if (el.getAttribute('contenteditable') === 'true' || el.dataset.currentlyEditing === 'true') { activeEditsExist = true; }
             });
-            
             if (activeEditsExist) {
                  alert("Warning: Some sections appear to be in edit mode. 'Save All' logs current content to console but doesn't finalize individual section edits. Please save or cancel individual sections first for proper state management.");
             }
-            
             console.log("Saving ALL content (innerHTML of .content-editable elements with IDs):", allEditableContent);
-            alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console.`);
+            alert(`All content from ${Object.keys(allEditableContent).length} identified editable regions has been logged to the console. Implement actual save logic as needed.`);
         }
     </script>
 </body>
