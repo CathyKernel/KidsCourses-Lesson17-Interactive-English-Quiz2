@@ -184,6 +184,13 @@
             transform: scale(1.02);
         }
 
+        /* MODIFICATION: Added style for the specific image on page 2 */
+        #bible-story-img {
+            max-width: 600px; /* Limits the maximum width of the image */
+            width: 100%;      /* Ensures it scales down within the container if container is narrower than 600px */
+                               /* height: auto; will be inherited from .image-container img */
+        }
+
         .image-gallery-container {
             display: flex;
             flex-wrap: wrap; 
