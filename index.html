@@ -137,7 +137,7 @@
             background-color: rgba(79, 195, 247, 0.1);
         }
         
-        .image-container {
+        .image-container { /* General style for single image containers */
             text-align: center;
             margin: 20px 0;
             position: relative;
@@ -153,6 +153,38 @@
         
         .image-container img:hover {
             transform: scale(1.02);
+        }
+
+        /* Styles for the image gallery on Page 4 */
+        .image-gallery-container {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: space-around; 
+            margin-bottom: 20px;
+        }
+
+        .image-gallery-container .image-upload-slot { /* Changed class name for clarity */
+            flex: 1 1 300px; 
+            max-width: 32%; 
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1); 
+            padding: 15px; /* Increased padding */
+            border-radius: 8px; /* Increased radius */
+            background-color: #fff;
+            text-align: center; /* Center content of slot */
+            display: flex; /* Added for better internal alignment */
+            flex-direction: column; /* Stack image and button vertically */
+            align-items: center; /* Center items horizontally */
+        }
+
+        .image-gallery-container .image-upload-slot img {
+            max-width: 100%;
+            height: auto; /* Maintain aspect ratio */
+            min-height: 150px; /* Minimum height for placeholder */
+            object-fit: cover; /* Cover the area, might crop */
+            border-radius: 6px; 
+            margin-bottom: 15px; 
+            background-color: #f0f0f0; /* Placeholder background */
         }
         
         .upload-btn {
@@ -192,21 +224,21 @@
             font-size: 1.2rem;
         }
         
-        .drag-drop-container { /* Pool for draggable prepositions */
+        .drag-drop-container { 
             display: flex;
             flex-wrap: wrap;
-            gap: 10px; /* Reduced gap slightly */
+            gap: 10px; 
             margin: 20px 0;
             padding: 10px;
             border: 1px solid var(--light);
             border-radius: 6px;
-            min-height: 50px; /* Ensure it has some height even if empty */
+            min-height: 50px; 
         }
         
-        .draggable { /* Style for preposition blocks */
+        .draggable { 
             background-color: white;
             border: 2px dashed var(--primary);
-            padding: 8px 12px; /* Adjusted padding */
+            padding: 8px 12px; 
             border-radius: 6px;
             cursor: grab;
             font-weight: 500;
@@ -220,13 +252,12 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        .dropzone { /* Container for a sentence with a drop target */
-            /* min-height: 100px; No longer needed as p will define height */
-            border: 2px solid transparent; /* Remove default border, rely on p */
+        .dropzone { 
+            border: 2px solid transparent; 
             border-radius: 8px;
-            padding: 0; /* Padding handled by p or internal elements */
-            background-color: transparent; /* No background for dropzone itself */
-            margin: 10px 0; /* Reduced margin */
+            padding: 0; 
+            background-color: transparent; 
+            margin: 10px 0; 
             transition: all 0.3s;
         }
         
@@ -234,36 +265,35 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap; 
-            padding: 10px; /* Add padding to the paragraph for spacing */
-            border: 1px solid #eee; /* Light border for the sentence line */
+            padding: 10px; 
+            border: 1px solid #eee; 
             border-radius: 6px;
         }
 
-        .drop-target { /* The SPAN that will hold the draggable */
+        .drop-target { 
             min-width: 80px; 
-            min-height: 38px; /* Approx height of a draggable */
-            display: inline-flex; /* To center the draggable if smaller */
+            min-height: 38px; 
+            display: inline-flex; 
             align-items: center;
             justify-content: center;
             vertical-align: middle; 
-            border: 2px dashed var(--accent); /* Visible when empty */
+            border: 2px dashed var(--accent); 
             border-radius: 6px;
-            padding: 2px; /* Small padding for the placeholder */
-            margin: 0 5px; /* Spacing around the slot */
+            padding: 2px; 
+            margin: 0 5px; 
         }
-        .drop-target:not(:empty) { /* When it has a draggable inside */
-            border-color: transparent; /* Hide dashed border when filled */
+        .drop-target:not(:empty) { 
+            border-color: transparent; 
             padding: 0;
         }
-        /* Style for the draggable when it's inside a drop-target (neutral state before feedback) */
         .drop-target .draggable {
             margin: 0; 
             box-shadow: none;
-            border: 2px solid var(--secondary); /* Default border when in a slot */
+            border: 2px solid var(--secondary); 
             background-color: var(--light);
         }
         
-        .dropzone.highlight .drop-target { /* Highlight effect on the target span */
+        .dropzone.highlight .drop-target { 
             background-color: rgba(79, 195, 247, 0.2);
             border-color: var(--secondary);
         }
@@ -287,7 +317,7 @@
             margin-left: 8px;
             font-size: 0.9em;
         }
-        .feedback-text-dd { /* For any text feedback next to dropzones if needed, though now feedback is on blocks */
+        .feedback-text-dd { 
              margin-left: 10px;
              font-weight: bold;
         }
@@ -313,7 +343,6 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        /* ... (rest of your CSS remains the same) ... */
         .btn-secondary {
             background-color: #6c757d;
         }
@@ -352,6 +381,11 @@
         .page { display: none; }
         .page.active { display: block; }
         
+        @media (max-width: 992px) { 
+            .image-gallery-container .image-upload-slot {
+                max-width: 48%; 
+            }
+        }
         @media (max-width: 768px) {
             .container { padding: 15px; }
             header { padding: 15px 0; }
@@ -367,11 +401,14 @@
                 font-size: 0.8rem;
             }
             .dropzone p {
-                flex-direction: column; /* Stack sentence parts on small screens */
+                flex-direction: column; 
                 align-items: flex-start;
             }
             .drop-target {
-                margin: 5px 0; /* Adjust margin for stacked layout */
+                margin: 5px 0; 
+            }
+            .image-gallery-container .image-upload-slot { /* Single column on small screens */
+                max-width: 100%; 
             }
         }
     </style>
@@ -384,7 +421,7 @@
             <p>Prepositions of Place & God's Laws</p>
         </header>
         
-        <!-- Page 1 to 4 remain the same -->
+        <!-- Page 1: Introduction (No changes) -->
         <div class="page active" id="page1">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -396,7 +433,6 @@
                 <div class="content-editable" id="p1-prayer-review" contenteditable="false">
                     <p>Let's begin our lesson with prayer. Dear Lord, thank you for this opportunity to learn English and your Word. Help us to understand your laws and how to use prepositions correctly. Amen.</p>
                 </div>
-                
                 <div class="verse-box">
                     <div class="edit-controls">
                         <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -408,7 +444,6 @@
                     </div>
                 </div>
             </section>
-            
             <section class="lesson-section">
                 <div class="edit-controls">
                     <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -427,7 +462,6 @@
                     </ul>
                 </div>
             </section>
-            
             <div class="page-navigation">
                 <button class="btn btn-secondary" disabled><i class="fas fa-arrow-left"></i> Previous</button>
                 <button class="btn" onclick="navigateTo(2)">Next <i class="fas fa-arrow-right"></i></button>
@@ -435,8 +469,9 @@
             <div class="page-indicator">Page 1 of 6</div>
         </div>
         
+        <!-- Page 2: Bible Reading (No changes) -->
         <div class="page" id="page2">
-            <section class="lesson-section">
+             <section class="lesson-section">
                 <div class="edit-controls">
                     <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
                     <button class="save-btn-section hidden" onclick="saveSectionChanges(this)"><i class="fas fa-save"></i> Save</button>
@@ -447,7 +482,6 @@
                     <p>Today we'll read from Exodus 3:9-12; 5:1-11; 12:21-42; 20:1-17</p>
                     <p><strong>Theme:</strong> Where is it?</p>
                 </div>
-                
                 <div class="image-container">
                     <img src="https://freebibleimages.org/slides/moses/moses-10-commandments-1.jpg" alt="Moses with the Ten Commandments" id="bible-story-img">
                     <div>
@@ -456,7 +490,6 @@
                     </div>
                 </div>
             </section>
-            
             <section class="lesson-section">
                 <div class="edit-controls">
                     <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -470,14 +503,14 @@
                     <p>God loved the people he made. He wanted them to live good, holy lives. So he gave them some laws. These laws help people to live the way God wants.</p>
                 </div>
             </section>
-            
             <div class="page-navigation">
                 <button class="btn btn-secondary" onclick="navigateTo(1)"><i class="fas fa-arrow-left"></i> Previous</button>
                 <button class="btn" onclick="navigateTo(3)">Next <i class="fas fa-arrow-right"></i></button>
             </div>
             <div class="page-indicator">Page 2 of 6</div>
         </div>
-        
+
+        <!-- Page 3: Pronunciation and Grammar (No changes) -->
         <div class="page" id="page3">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -493,7 +526,6 @@
                         <li><strong>/H/ sound:</strong> help, have, hundred, house, home</li>
                     </ul>
                 </div>
-                
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-volume-up"></i> Listen and Repeat</div>
                     <audio controls class="audio-player" id="pronunciation-audio">
@@ -502,7 +534,6 @@
                     </audio>
                     <button class="upload-btn" onclick="document.getElementById('audio-upload-page3').click()"><i class="fas fa-upload"></i> Change Audio</button>
                     <input type="file" id="audio-upload-page3" accept="audio/*" style="display: none;" onchange="previewAudio(event, 'pronunciation-audio')">
-                    
                     <div class="content-editable" id="p3-listen-repeat-instructions" contenteditable="false"> 
                         <p>Repeat after the audio:</p>
                         <ol>
@@ -513,7 +544,6 @@
                     </div>
                 </div>
             </section>
-            
             <section class="lesson-section">
                 <div class="edit-controls">
                     <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -531,7 +561,6 @@
                     </ul>
                 </div>
             </section>
-            
             <div class="page-navigation">
                 <button class="btn btn-secondary" onclick="navigateTo(2)"><i class="fas fa-arrow-left"></i> Previous</button>
                 <button class="btn" onclick="navigateTo(4)">Next <i class="fas fa-arrow-right"></i></button>
@@ -539,6 +568,7 @@
             <div class="page-indicator">Page 3 of 6</div>
         </div>
         
+        <!-- Page 4: Interactive Practice (MODIFIED for 3 images) -->
         <div class="page" id="page4">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -548,17 +578,31 @@
                 </div>
                 <h2>Interactive Practice: Where Is It?</h2>
                 <div class="interactive-activity">
-                    <div class="activity-title"><i class="fas fa-eye"></i> What Do You See?</div>
-                    <div class="image-container">
-                        <img src="https://freebibleimages.org/slides/parables/parable-good-samaritan-03.jpg" alt="Park scene for prepositions practice" id="preposition-practice-img">
-                        <button class="upload-btn" onclick="document.getElementById('image-upload-page4').click()"><i class="fas fa-upload"></i> Change Image</button>
-                        <input type="file" id="image-upload-page4" accept="image/*" style="display: none;" onchange="previewImage(event, 'preposition-practice-img')">
+                    <div class="activity-title"><i class="fas fa-eye"></i> What Do You See? (Choose from 3 images)</div>
+                    
+                    <!-- Image Gallery for 3 Uploads -->
+                    <div class="image-gallery-container">
+                        <div class="image-upload-slot">
+                            <img src="https://freebibleimages.org/slides/parables/parable-good-samaritan-03.jpg" alt="Preposition scene 1" id="preposition-practice-img-1">
+                            <button class="upload-btn" onclick="document.getElementById('image-upload-page4-1').click()"><i class="fas fa-upload"></i> Change Image 1</button>
+                            <input type="file" id="image-upload-page4-1" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="image-upload-slot">
+                            <img src="https://freebibleimages.org/slides/parables/parable-good-samaritan-03.jpg" alt="Preposition scene 2" id="preposition-practice-img-2">
+                            <button class="upload-btn" onclick="document.getElementById('image-upload-page4-2').click()"><i class="fas fa-upload"></i> Change Image 2</button>
+                            <input type="file" id="image-upload-page4-2" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="image-upload-slot">
+                            <img src="https://freebibleimages.org/slides/parables/parable-good-samaritan-03.jpg" alt="Preposition scene 3" id="preposition-practice-img-3">
+                            <button class="upload-btn" onclick="document.getElementById('image-upload-page4-3').click()"><i class="fas fa-upload"></i> Change Image 3</button>
+                            <input type="file" id="image-upload-page4-3" accept="image/*" style="display: none;">
+                        </div>
                     </div>
                     
                     <div class="quiz-container">
                         <div class="quiz-question">
                             <div class="content-editable" id="p4-quiz-instructions" contenteditable="false">
-                                <p>Complete the sentences about the picture:</p>
+                                <p>Complete the sentences (you can refer to any of the images above):</p>
                             </div>
                             <ol>
                                 <li>The people are <select class="preposition-select">
@@ -593,7 +637,7 @@
             <div class="page-indicator">Page 4 of 6</div>
         </div>
         
-        <!-- Page 5: Drag and Drop Activity -->
+        <!-- Page 5: Drag and Drop Activity (No changes from previous optimization) -->
         <div class="page" id="page5">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -607,9 +651,7 @@
                 </div>
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-arrows-alt"></i> Drag the Prepositions</div>
-                    
                     <div class="drag-drop-container" id="drag-drop-pool">
-                        <!-- Draggable items will be appended here by JS or can be hardcoded -->
                         <div class="draggable" draggable="true" data-word="on">on</div>
                         <div class="draggable" draggable="true" data-word="behind">behind</div>
                         <div class="draggable" draggable="true" data-word="above">above</div>
@@ -617,7 +659,6 @@
                         <div class="draggable" draggable="true" data-word="beside">beside</div>
                         <div class="draggable" draggable="true" data-word="in">in</div>
                     </div>
-                    
                     <div class="dropzone" id="dropzone-1" data-correct="on">
                         <p>1. The food is <span class="drop-target"></span> the blanket.</p>
                     </div>
@@ -636,12 +677,10 @@
                     <div class="dropzone" id="dropzone-6" data-correct="in">
                         <p>6. The bread is <span class="drop-target"></span> the basket.</p>
                     </div>
-                    
                     <button class="btn" onclick="checkDragDrop()">Check All Answers</button>
                     <button class="btn btn-secondary" onclick="resetDragDrop()">Reset</button>
                 </div>
             </section>
-            
             <div class="page-navigation">
                 <button class="btn btn-secondary" onclick="navigateTo(4)"><i class="fas fa-arrow-left"></i> Previous</button>
                 <button class="btn" onclick="navigateTo(6)">Next <i class="fas fa-arrow-right"></i></button>
@@ -649,7 +688,7 @@
             <div class="page-indicator">Page 5 of 6</div>
         </div>
         
-        <!-- Page 6: Vocabulary and Conclusion -->
+        <!-- Page 6: Vocabulary and Conclusion (No changes) -->
         <div class="page" id="page6">
             <section class="lesson-section">
                 <div class="edit-controls">
@@ -661,7 +700,6 @@
                 <div class="content-editable" id="p6-vocab-review-instructions" contenteditable="false">
                     <p>Listen and write these words:</p>
                 </div>
-                
                 <div class="interactive-activity">
                     <div class="activity-title"><i class="fas fa-headphones"></i> Listen and Write</div>
                     <audio controls class="audio-player" id="vocabulary-audio">
@@ -670,7 +708,6 @@
                     </audio>
                     <button class="upload-btn" onclick="document.getElementById('audio-upload-page6').click()"><i class="fas fa-upload"></i> Change Audio</button>
                     <input type="file" id="audio-upload-page6" accept="audio/*" style="display: none;" onchange="previewAudio(event, 'vocabulary-audio')">
-                    
                     <div class="quiz-container">
                         <div class="quiz-question">
                             <div class="content-editable" id="p6-listen-write-instructions" contenteditable="false">
@@ -700,7 +737,6 @@
                     </div>
                 </div>
             </section>
-            
             <section class="lesson-section">
                 <div class="edit-controls">
                     <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -717,7 +753,6 @@
                         <li>Important vocabulary about locations</li>
                     </ul>
                 </div>
-                
                 <div class="verse-box">
                     <div class="edit-controls">
                         <button class="edit-btn-section" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Edit</button>
@@ -729,11 +764,9 @@
                     </div>
                 </div>
             </section>
-            
             <div class="text-center">
                 <button class="btn save-all-btn" onclick="saveAllChanges()"><i class="fas fa-save"></i> Save All Changes</button>
             </div>
-            
             <div class="page-navigation">
                 <button class="btn btn-secondary" onclick="navigateTo(5)"><i class="fas fa-arrow-left"></i> Previous</button>
                 <button class="btn" disabled>Next <i class="fas fa-arrow-right"></i></button>
@@ -747,29 +780,23 @@
     </div>
 
     <script>
-        // Navigation between pages
+        // Navigation between pages (no changes)
         let currentPage = 1;
         const totalPages = 6;
-        
         function navigateTo(pageNumber) {
             if (pageNumber < 1 || pageNumber > totalPages) return;
-            
             const currentPageElement = document.getElementById(`page${currentPage}`);
             const nextPageElement = document.getElementById(`page${pageNumber}`);
-
             if (currentPageElement) currentPageElement.classList.remove('active');
             if (nextPageElement) nextPageElement.classList.add('active');
-            
             currentPage = pageNumber;
-            
             document.querySelectorAll('.page-indicator').forEach(indicator => {
                 indicator.textContent = `Page ${currentPage} of ${totalPages}`;
             });
-            
             window.scrollTo(0, 0);
         }
 
-        // --- EDITING FUNCTIONS (No changes here) ---
+        // --- EDITING FUNCTIONS (No changes) ---
         function enableEdit(triggerElement) {
             let controlsContainer, section, editableToActivate, editBtnAssociated;
             if (triggerElement.classList.contains('edit-btn-section')) { 
@@ -870,24 +897,46 @@
             if (saveBtn) saveBtn.classList.add('hidden');
             if (editBtn) editBtn.classList.remove('hidden');
         }
+        
+        // --- IMAGE AND AUDIO PREVIEW (previewImage is generic and fine) ---
         function previewImage(event, imgId) {
             const reader = new FileReader();
             const output = document.getElementById(imgId);
-            if (!output) { console.error("Image element not found:", imgId); return; }
-            reader.onload = function(){ output.src = reader.result; };
-            if (event.target.files && event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
+            if (!output) {
+                console.error("Image element not found:", imgId);
+                return;
+            }
+            reader.onload = function(){
+                output.src = reader.result;
+            };
+            if (event.target.files && event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
         }
         function previewAudio(event, audioId) {
             const reader = new FileReader();
             const audioPlayer = document.getElementById(audioId);
-             if (!audioPlayer) { console.error("Audio player element not found:", audioId); return; }
-            reader.onload = function(e) { audioPlayer.src = e.target.result; audioPlayer.load(); };
-            if (event.target.files && event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
+             if (!audioPlayer) {
+                console.error("Audio player element not found:", audioId);
+                return;
+            }
+            reader.onload = function(e) {
+                audioPlayer.src = e.target.result;
+                audioPlayer.load();
+            };
+            if (event.target.files && event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
         }
         
-        // --- DRAG AND DROP FUNCTIONALITY (ENHANCED) ---
+        // --- DRAG AND DROP FUNCTIONALITY (No changes from previous optimization) ---
         let draggedItem = null; 
-        const originalDraggablePoolId = 'drag-drop-pool'; // ID of the container for initial draggables
+        const originalDraggablePoolId = 'drag-drop-pool';
+        // Functions: addDraggableEvents, handleDragStart, handleDragEnd, handleDragOver, 
+        // handleDragLeave, handleDragLeavePool, handleDropOnTarget, handleDropOnPool,
+        // checkDragDrop, resetDragDrop remain the same as in the previous response.
+        // ... (These functions are not repeated here for brevity but are assumed to be present)
+
 
         document.addEventListener('DOMContentLoaded', function() {
             // Click-to-edit for content-editable divs
@@ -898,61 +947,94 @@
                 });
             });
 
-            const draggables = document.querySelectorAll('.draggable');
-            const dropTargets = document.querySelectorAll('.drop-target');
+            // Drag and Drop Setup (Page 5)
+            const draggables = document.querySelectorAll('#page5 .draggable'); // Scope to page 5
+            const dropTargets = document.querySelectorAll('#page5 .drop-target'); // Scope to page 5
             const dragDropPool = document.getElementById(originalDraggablePoolId);
             
-            // Add drag event listeners to each draggable item
             draggables.forEach(draggable => {
                 addDraggableEvents(draggable);
             });
             
-            // Add drop event listeners to each drop target (span)
             dropTargets.forEach(target => {
                 target.addEventListener('dragover', handleDragOver);
                 target.addEventListener('dragleave', handleDragLeave);
                 target.addEventListener('drop', handleDropOnTarget);
             });
 
-            // Add drop event listeners to the original pool
             if (dragDropPool) {
                 dragDropPool.addEventListener('dragover', handleDragOver);
                 dragDropPool.addEventListener('dragleave', handleDragLeavePool);
                 dragDropPool.addEventListener('drop', handleDropOnPool);
             }
             
-            // Image and Audio upload initializers (no changes)
-            // ...
-        });
+            // Image and Audio upload initializers
+            // General image uploads (e.g., Page 2)
+            const generalImageUploads = [
+                { inputId: 'image-upload-page2', imgId: 'bible-story-img' }
+            ];
+            generalImageUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                    // If onchange is in HTML, this isn't strictly needed, but good practice if moving to JS-only event handling
+                    if (!inputElement.onchange) { 
+                        inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                    }
+                }
+            });
 
+            // Specific setup for Page 4 multiple image uploads
+            const page4ImageInputs = [
+                { inputId: 'image-upload-page4-1', imgId: 'preposition-practice-img-1' },
+                { inputId: 'image-upload-page4-2', imgId: 'preposition-practice-img-2' },
+                { inputId: 'image-upload-page4-3', imgId: 'preposition-practice-img-3' }
+            ];
+            page4ImageInputs.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                    inputElement.onchange = (event) => previewImage(event, upload.imgId);
+                }
+            });
+
+            // Audio uploads
+            const audioUploads = [
+                { inputId: 'audio-upload-page3', audioId: 'pronunciation-audio' },
+                { inputId: 'audio-upload-page6', audioId: 'vocabulary-audio' }
+            ];
+            audioUploads.forEach(upload => {
+                const inputElement = document.getElementById(upload.inputId);
+                if (inputElement) {
+                     if (!inputElement.onchange) {
+                        inputElement.onchange = (event) => previewAudio(event, upload.audioId);
+                    }
+                }
+            });
+        });
+        
+        // --- DRAG AND DROP FUNCTIONS (FROM PREVIOUS OPTIMIZATION, ENSURE THEY ARE HERE) ---
         function addDraggableEvents(draggable) {
             draggable.addEventListener('dragstart', handleDragStart);
             draggable.addEventListener('dragend', handleDragEnd);
         }
 
         function handleDragStart(event) {
-            draggedItem = event.target; // The .draggable div
-            // Briefly make the original item semi-transparent if it's from the pool
+            draggedItem = event.target; 
             setTimeout(() => { 
-                if (draggedItem && draggedItem.parentElement.id === originalDraggablePoolId) {
+                if (draggedItem && draggedItem.parentElement && draggedItem.parentElement.id === originalDraggablePoolId) {
                     draggedItem.style.opacity = '0.5'; 
                 }
             }, 0);
-
-            // If dragging from a sentence slot, reset its style to neutral "dragging" state
-            if (draggedItem.parentElement.classList.contains('drop-target')) {
-                draggedItem.style.border = '2px dashed var(--primary)'; // Style like it's from pool while dragging
+            if (draggedItem.parentElement && draggedItem.parentElement.classList.contains('drop-target')) {
+                draggedItem.style.border = '2px dashed var(--primary)'; 
                 draggedItem.style.backgroundColor = 'white';
-                // The parent .drop-target will become empty visually as item is dragged away
             }
         }
 
         function handleDragEnd() {
             if (draggedItem) {
-                draggedItem.style.opacity = '1'; // Restore opacity
+                draggedItem.style.opacity = '1'; 
             }
             draggedItem = null;
-            // Remove any general highlight from pool or targets
             document.querySelectorAll('.drag-drop-container.highlight, .drop-target.highlight').forEach(el => {
                 el.classList.remove('highlight');
             });
@@ -960,37 +1042,35 @@
 
         function handleDragOver(event) {
             event.preventDefault(); 
-            if (event.target.classList.contains('drop-target') || event.target.id === originalDraggablePoolId) {
-                 // Highlight the specific drop-target span or the pool
+            if (event.target.classList.contains('drop-target') || (event.target.id === originalDraggablePoolId)) {
                 const targetElement = event.target.classList.contains('drop-target') ? event.target : 
                                       (event.target.closest('.drop-target') || (event.target.id === originalDraggablePoolId ? event.target : null));
                 if (targetElement) {
                     targetElement.classList.add('highlight');
                 }
-            } else if (event.target.closest('.drop-target')) { // If over content inside drop-target, highlight drop-target
+            } else if (event.target.closest('.drop-target')) { 
                  event.target.closest('.drop-target').classList.add('highlight');
             }
         }
 
         function handleDragLeave(event) {
-            if (event.target.classList.contains('drop-target') || event.target.id === originalDraggablePoolId) {
+            if (event.target.classList.contains('drop-target') || (event.target.id === originalDraggablePoolId)) {
                 event.target.classList.remove('highlight');
             } else if (event.target.closest('.drop-target')) {
                 event.target.closest('.drop-target').classList.remove('highlight');
             }
         }
-        function handleDragLeavePool(event) { // Specific for pool if needed
+        function handleDragLeavePool(event) { 
             if (event.target.id === originalDraggablePoolId) {
                 event.target.classList.remove('highlight');
             }
         }
 
-
         function handleDropOnTarget(event) {
             event.preventDefault();
-            const currentDropTargetSpan = event.target.closest('.drop-target'); // Ensure we get the span
+            const currentDropTargetSpan = event.target.closest('.drop-target'); 
             if (!currentDropTargetSpan || !draggedItem) {
-                if(draggedItem) draggedItem.style.opacity = '1'; // Restore opacity if drop failed early
+                if(draggedItem) draggedItem.style.opacity = '1'; 
                 return;
             }
 
@@ -998,68 +1078,52 @@
             const parentDropzoneDiv = currentDropTargetSpan.closest('.dropzone');
             const dragDropPool = document.getElementById(originalDraggablePoolId);
 
-            // 1. If currentDropTargetSpan already contains a DIFFERENT preposition, move it back to the pool
             const existingPrepositionDiv = currentDropTargetSpan.querySelector('.draggable');
             if (existingPrepositionDiv && existingPrepositionDiv !== draggedItem) {
-                existingPrepositionDiv.style.border = '2px dashed var(--primary)'; // Pool style
-                existingPrepositionDiv.style.backgroundColor = 'white';       // Pool style
+                existingPrepositionDiv.style.border = '2px dashed var(--primary)'; 
+                existingPrepositionDiv.style.backgroundColor = 'white';       
                 dragDropPool.appendChild(existingPrepositionDiv);
             }
-            currentDropTargetSpan.innerHTML = ''; // Clear the span for the new item
-
-            // 2. Place the new draggedItem into this drop-target span
+            currentDropTargetSpan.innerHTML = ''; 
             currentDropTargetSpan.appendChild(draggedItem);
             draggedItem.style.opacity = '1'; 
-            
-            // 3. Style for being in a sentence slot (neutral before feedback)
             draggedItem.style.border = '2px solid var(--secondary)'; 
             draggedItem.style.backgroundColor = 'var(--light)';
 
-            // 4. Immediate Feedback
             const userAnswer = draggedItem.dataset.word;
             const correctAnswer = parentDropzoneDiv.dataset.correct;
 
             if (userAnswer === correctAnswer) {
                 draggedItem.style.borderColor = 'var(--success)';
-                draggedItem.style.backgroundColor = 'rgba(40, 167, 69, 0.15)'; // Feedback success color
+                draggedItem.style.backgroundColor = 'rgba(40, 167, 69, 0.15)'; 
             } else {
                 draggedItem.style.borderColor = 'var(--danger)';
-                draggedItem.style.backgroundColor = 'rgba(220, 53, 69, 0.15)'; // Feedback danger color
+                draggedItem.style.backgroundColor = 'rgba(220, 53, 69, 0.15)'; 
             }
-            currentDropTargetSpan.setAttribute('data-answer', userAnswer); // For check all button
+            currentDropTargetSpan.setAttribute('data-answer', userAnswer); 
         }
 
         function handleDropOnPool(event) {
             event.preventDefault();
             const pool = document.getElementById(originalDraggablePoolId);
             if (!draggedItem || !pool) return;
-
             pool.classList.remove('highlight');
             
-            // Only append if it's not already in the pool (e.g. dragging within the pool)
-            // and if it came from a sentence slot
-            if (draggedItem.parentElement.classList.contains('drop-target')) {
-                draggedItem.style.border = '2px dashed var(--primary)'; // Pool style
-                draggedItem.style.backgroundColor = 'white';       // Pool style
+            if (draggedItem.parentElement && draggedItem.parentElement.classList.contains('drop-target')) {
+                draggedItem.style.border = '2px dashed var(--primary)'; 
+                draggedItem.style.backgroundColor = 'white';       
                 draggedItem.style.opacity = '1';
                 pool.appendChild(draggedItem);
-                // The source drop-target span is now empty.
-            } else if (draggedItem.parentElement.id !== originalDraggablePoolId) {
-                 // If it was dragged from somewhere else unexpected, put it in the pool
+            } else if (draggedItem.parentElement && draggedItem.parentElement.id !== originalDraggablePoolId) {
                 draggedItem.style.border = '2px dashed var(--primary)'; 
                 draggedItem.style.backgroundColor = 'white';       
                 draggedItem.style.opacity = '1';
                 pool.appendChild(draggedItem);
             }
-            // If draggedItem was already in the pool and dropped on the pool, do nothing to its style.
         }
         
-        /**
-         * Checks ALL answers for the drag and drop preposition activity.
-         * Provides an overall alert. Individual feedback is already on items.
-         */
         function checkDragDrop() {
-            const dropzones = document.querySelectorAll('.dropzone');
+            const dropzones = document.querySelectorAll('#page5 .dropzone'); // Scope to page 5
             let allAreCorrect = true;
             let anyMissing = false;
             
@@ -1067,8 +1131,8 @@
                 const targetSpan = zone.querySelector('.drop-target');
                 if (!targetSpan) return;
 
-                targetSpan.style.borderStyle = 'dashed'; // Reset to dashed (empty or filled)
-                targetSpan.style.borderColor = targetSpan.querySelector('.draggable') ? 'transparent' : 'var(--accent)'; // Default for empty/filled
+                targetSpan.style.borderStyle = 'dashed'; 
+                targetSpan.style.borderColor = targetSpan.querySelector('.draggable') ? 'transparent' : 'var(--accent)'; 
 
                 const placedDraggableDiv = targetSpan.querySelector('.draggable');
                 const correctAnswer = zone.dataset.correct;
@@ -1077,13 +1141,11 @@
                     const userAnswer = placedDraggableDiv.dataset.word;
                     if (userAnswer !== correctAnswer) {
                         allAreCorrect = false;
-                        // Visual feedback is already on placedDraggableDiv
                     }
                 } else {
-                    // No draggable in this slot
                     allAreCorrect = false;
                     anyMissing = true;
-                    targetSpan.style.borderColor = 'var(--danger)'; // Highlight empty required slot
+                    targetSpan.style.borderColor = 'var(--danger)'; 
                 }
             });
             
@@ -1091,36 +1153,29 @@
                 alert('Great job! All prepositions are placed correctly!');
             } else if (anyMissing) {
                 alert('Some prepositions are missing or incorrect. Please review the highlighted slots.');
-            } else { // All slots filled, but some are incorrect
+            } else { 
                 alert('Some prepositions are incorrect. Please review the highlighted items.');
             }
         }
         
-        /**
-         * Resets the drag and drop activity.
-         * Moves all prepositions back to the pool and resets styles.
-         */
         function resetDragDrop() {
             const dragDropPool = document.getElementById(originalDraggablePoolId);
-            const dropTargets = document.querySelectorAll('.drop-target');
+            const dropTargets = document.querySelectorAll('#page5 .drop-target'); // Scope to page 5
 
             dropTargets.forEach(targetSpan => {
                 const placedDraggableDiv = targetSpan.querySelector('.draggable');
                 if (placedDraggableDiv) {
-                    // Reset its styles to pool-default
                     placedDraggableDiv.style.border = '2px dashed var(--primary)';
                     placedDraggableDiv.style.backgroundColor = 'white';
                     placedDraggableDiv.style.opacity = '1';
-                    // Move it back to the pool
                     dragDropPool.appendChild(placedDraggableDiv);
                 }
-                targetSpan.innerHTML = ''; // Clear the span
+                targetSpan.innerHTML = ''; 
                 targetSpan.removeAttribute('data-answer'); 
-                targetSpan.style.borderColor = 'var(--accent)'; // Reset border to empty slot style
+                targetSpan.style.borderColor = 'var(--accent)'; 
                 targetSpan.style.borderStyle = 'dashed';
             });
 
-            // Ensure all original draggables in the pool are styled correctly (if any were left or added back)
             dragDropPool.querySelectorAll('.draggable').forEach(d => {
                 d.style.border = '2px dashed var(--primary)';
                 d.style.backgroundColor = 'white';
@@ -1128,17 +1183,15 @@
             });
         }
         
-        // --- PREPOSITION SELECT QUIZ (PAGE 4) ---
+        // --- PREPOSITION SELECT QUIZ (PAGE 4) (No changes) ---
         function checkPrepositions() {
             const selects = document.querySelectorAll('.preposition-select');
             const correctAnswers = ['at', 'behind', 'in']; 
             let allCorrect = true;
-            
             selects.forEach((select, index) => {
                 const feedbackSpan = select.parentElement.querySelector('.feedback-text');
                 if (!feedbackSpan) return;
                 feedbackSpan.textContent = ''; 
-
                 if (select.value === correctAnswers[index]) {
                     select.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
                     select.style.borderColor = 'var(--success)';
@@ -1156,7 +1209,6 @@
                     feedbackSpan.style.color = 'var(--danger)';
                 }
             });
-            
             if (allCorrect) {
                 alert('Excellent! All your preposition answers are correct!');
             } else {
@@ -1164,7 +1216,7 @@
             }
         }
         
-        // --- VOCABULARY REVIEW (PAGE 6) (No changes here) ---
+        // --- VOCABULARY REVIEW (PAGE 6) (No changes) ---
         function showVocabAnswers() {
             const correctWords = [
                 'laws', 'between', 'under', 
@@ -1227,7 +1279,7 @@
             });
         }
 
-        // --- SAVE ALL CHANGES (General Content) (No changes here) ---
+        // --- SAVE ALL CHANGES (General Content) (No changes) ---
         function saveAllChanges() {
             const allEditableContent = {};
             let activeEditsExist = false;
